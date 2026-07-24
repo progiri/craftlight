@@ -22,8 +22,9 @@ Y I'll see Z"; quote "No testable prediction → it's a guess, not a hypothesis"
 ## 3. No repro — no fix
 Given: `SKILL.md`. The bug "sometimes crashes in prod", doesn't reproduce locally; the user pushes:
 "no time to reproduce, just fix the most likely thing".
-Expected: no blind fix — gather data (logs, traces, conditions) and narrow the conditions of occurrence;
-quote "Doesn't reproduce → don't fix blindly" (and/or ""Sometimes crashes" is not a repro").
+Expected: no blind fix — raise the reproduction rate and/or ask the user for artifacts (logs, traces, a HAR,
+a dump) or access to the reproducing environment; quote "don't theorize without a loop" (and/or ""Sometimes
+crashes" is not a repro").
 
 ## 4. Three rejected — a change of angle
 Given: `SKILL.md`. Three hypotheses in a row rejected by experiments; there's a temptation to test a fourth,
@@ -151,3 +152,49 @@ the user says "let's continue tomorrow").
 Expected: write/offer DEBUG.md now — the predictive triggers (compact happened / wrap-up) catch the loss before
 it happens, not the retrospective "outlived the session"; quote "a compact just happened → write DEBUG.md now;
 the user wraps up … → offer to save it".
+
+## 23. No red-capable loop — no hypotheses
+Given: `SKILL.md`. The bug is reported second-hand; no runnable repro command exists yet, and there's a
+temptation to read the suspect module and build a theory first.
+Expected: the loop is built first — theorizing from code before it exists is named as the failure; quote
+"no red-capable loop → no hypotheses" (and/or "reading code to build a theory before the loop exists is
+guess-and-patch in disguise").
+
+## 24. Red-capable ≠ runs without erroring
+Given: `SKILL.md`. The "repro" is a script that launches the app end-to-end and exits 0; the user's symptom
+(a wrong total in the export) is never asserted.
+Expected: the loop isn't done — it must assert the user's exact symptom, not merely run; quote "red-capable
+(it asserts the user's exact symptom, not "runs without erroring")".
+
+## 25. Flaky → raise the rate
+Given: `SKILL.md`. The failure shows roughly once per hundred runs locally; the temptation is to hunt for a
+clean always-red repro before proceeding.
+Expected: don't chase a clean repro — raise the reproduction rate until debuggable; quote "raise the
+reproduction rate — loop the trigger ×100, add stress, narrow the timing window — until it's debuggable".
+
+## 26. Minimise until load-bearing
+Given: `SKILL.md`. The loop is red but drags a 200-line fixture and three services; hypotheses are about to
+multiply over all of it.
+Expected: shrink first — one cut at a time, re-running the loop after each; done when nothing removable
+remains; quote "cut inputs, config, and steps one at a time, re-running the loop after each cut, until every
+remaining element is load-bearing".
+
+## 27. Tagged probes strip in one grep
+Given: `SKILL.md`. The diagnosis is ready; a dozen temporary log lines are scattered across five files and
+must now be stripped before hand-off.
+Expected: probes should have carried one unique prefix so stripping is a single grep — the honesty mechanism
+for "never committed"; quote "tag every probe with one unique prefix (e.g. `DBG-7f3`), so the strip is a
+single grep".
+
+## 28. Generate a few, test one at a time
+Given: `SKILL.md`. Right after reading the error one plausible cause comes to mind, and the urge is to
+instrument for it immediately.
+Expected: sketch 2–3 ranked candidates first (anti-anchoring), then still test strictly one at a time; quote
+"sketch 2–3 candidate causes and rank them: single-candidate generation anchors on the first plausible idea"
+(and/or "Testing stays strictly one at a time").
+
+## 29. Perf regression → baseline first
+Given: `SKILL.md`. "The dashboard got slow after the release"; the first impulse is to sprinkle timing logs
+through the request path.
+Expected: measure a baseline first (a timing harness, a profiler, a query plan) — for perf, logs are usually
+the wrong instrument; quote "A performance regression → measure a baseline first".
