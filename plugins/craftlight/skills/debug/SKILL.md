@@ -14,7 +14,8 @@ main token-eater; a systematic pass is cheaper than three guesses.
 obvious one-liner; the root found → the fix goes through `task` (classification, the gate, a regression test).
 But diagnostic edits are the skill's own tools and are allowed: temporary log lines, probe tests, a narrow
 assertion. Two rules keep them honest: instrumentation is never committed and is stripped before the diagnosis is
-handed off; the reproduction test from step 1 is the exception — it is left uncommitted and passed to `task` as
+handed off — tag every probe with one unique prefix (e.g. `DBG-7f3`), so the strip is a single grep and no
+untagged stray survives; the reproduction test from step 1 is the exception — it is left uncommitted and passed to `task` as
 the ready-made regression test (task's fix begins red on it). The discipline's symmetry: plan plans and stops,
 code-review reads and doesn't edit, debug diagnoses and doesn't fix.
 
@@ -67,12 +68,19 @@ The order is mandatory — a skipped step is exactly guess-and-patch:
 3. **Check the obvious.** The right branch, the right env, a fresh build, a clean cache, the right dependency
    versions — and recent history: "when did it break, what changed?" is 'obvious' too, and asking the user is
    one of the cheapest experiments there is. A minute on "is it plugged in" saves an hour of false hypotheses.
-4. **One hypothesis at a time.** The formula: "if the cause is X, then under Y I'll see Z". No testable
-   prediction → it's a guess, not a hypothesis — don't test it with an experiment.
-5. **Minimal experiment.** The cheapest way to settle the prediction: a targeted log, a narrow probe test, a
-   binary search (over commits — git bisect, over data, over code). One factor at a time: change two and you
-   won't know which one worked. bisect needs a clean tree → stash the instrumentation first, and `git bisect
-   reset` when done, so the repo doesn't end stranded in detached HEAD.
+4. **Generate a few, test one at a time.** Before the first experiment, sketch 2–3 candidate causes and rank
+   them: single-candidate generation anchors on the first plausible idea, and showing the ranking to the user
+   is a cheap checkpoint — domain knowledge re-ranks it instantly. Testing stays strictly one at a time. The
+   formula: "if the cause is X, then under Y I'll see Z". No testable prediction → it's a guess, not a
+   hypothesis — don't test it with an experiment.
+5. **Minimal experiment.** An experiment is a run of the loop with one factor changed: change two and you
+   won't know which one worked. The cheapest probe that settles the prediction, in order of preference: a
+   debugger/REPL breakpoint where the environment offers one — one breakpoint beats ten logs; a targeted log
+   at a boundary that distinguishes the hypotheses; a narrow probe test; a binary search (over commits — git
+   bisect, over data, over code). Never "log everything and grep". A performance regression → measure a
+   baseline first (a timing harness, a profiler, a query plan): for perf, logs are usually the wrong
+   instrument. bisect needs a clean tree → stash the instrumentation first, and `git bisect reset` when done,
+   so the repo doesn't end stranded in detached HEAD.
 6. **Rejected → a line in the log, next.** Hypothesis, prediction, experiment, fact. The log keeps you from
    testing the same thing twice and makes the hunt resumable.
 7. **Root, not symptom.** The symptom vanished after fixing an effect — the classic false success: ask "why"
@@ -117,7 +125,7 @@ happened → write DEBUG.md now; the user wraps up ("let's continue tomorrow") �
   skill invites — the gate philosophy applies to experiments too.
 - **3 rejected hypotheses in a row** → stop: not a fourth guess, but a change of angle — a fresh read-only
   subagent's look at the repro+log, a question to the user about history, git bisect from the last working state.
-- **The repro is gone or flaky** → return to step 1: experiments without a stable repro mean nothing.
+- **The loop is gone or flaky** → return to step 1: experiments without a red-capable loop mean nothing.
 - **The root is in someone else's territory** (a library, infrastructure, an external service) → record the
   proof and stop: whether to work around it or fix upstream is the user's decision.
 - **An observation contradicts expectation** → trust the observation. "That can't be" means the model in your
