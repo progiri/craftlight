@@ -1,0 +1,20 @@
+{
+  "name": "craftlight",
+  "owner": {
+    "name": "progiri"
+  },
+  "metadata": {
+    "description": "A disciplined dev workflow: ceremony proportional to the task. brief / task / plan / debug / code-review / craft-graph."
+  },
+  "plugins": [
+    {
+      "name": "craftlight",
+      "source": "./plugins/craftlight",
+      "description": "Six skills of one discipline — decision by dialogue before the task, a task router, an initiative planner, systematic debugging, review without edits, and a decision graph.",
+      "homepage": "https://github.com/progiri/craftlight",
+      "repository": "https://github.com/progiri/craftlight",
+      "category": "workflow",
+      "keywords": ["workflow", "code-review", "task", "plan", "planning", "brief", "decision", "debug", "debugging", "root-cause", "spec-driven", "craft-graph", "decision-graph"]
+    }
+  ]
+}

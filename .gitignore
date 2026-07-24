@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# stray runtime artifacts from external orchestrators
+.omc/
+.planning/
+
+# editor / deps
+node_modules/
+*.log
+
+# python (hook fixture tests)
+__pycache__/
+*.pyc

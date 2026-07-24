@@ -1,0 +1,30 @@
+{
+  "name": "craftlight",
+  "description": "Six skills of one discipline: brief (decision by dialogue before the task), task (task router + CRAFT.md map), plan (decomposing an initiative into waves of tasks, above task), debug (systematic root-cause hunting without editing code), code-review (review without edits), and craft-graph (a graph of decisions and gotchas). Principle: ceremony proportional to the task — start light, escalate on explicit signals.",
+  "version": "0.13.0",
+  "author": {
+    "name": "progiri"
+  },
+  "homepage": "https://github.com/progiri/craftlight",
+  "repository": "https://github.com/progiri/craftlight",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "code-review",
+    "task",
+    "plan",
+    "planning",
+    "decomposition",
+    "brief",
+    "discussion",
+    "decision",
+    "debug",
+    "debugging",
+    "root-cause",
+    "spec-driven",
+    "craft-graph",
+    "decision-graph",
+    "docs",
+    "english"
+  ]
+}

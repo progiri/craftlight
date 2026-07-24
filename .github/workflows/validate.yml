@@ -1,0 +1,130 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Manifest JSON validity
+        run: |
+          python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))"
+          python3 -c "import json; json.load(open('plugins/craftlight/.claude-plugin/plugin.json'))"
+      - name: marketplace source points to an existing plugin.json
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          mp = json.load(open('.claude-plugin/marketplace.json'))
+          for p in mp['plugins']:
+              manifest = os.path.join(p['source'], '.claude-plugin', 'plugin.json')
+              assert os.path.isfile(manifest), f"no manifest at source: {manifest}"
+              json.load(open(manifest))
+          print(f"ok: {len(mp['plugins'])} plugin(s)")
+          PY
+      - name: Every skill has SKILL.md and tests/scenarios.md
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          root = 'plugins/craftlight/skills'
+          errs = []
+          for d in sorted(os.listdir(root)):
+              p = os.path.join(root, d)
+              if not os.path.isdir(p):
+                  continue
+              if not os.path.isfile(os.path.join(p, 'SKILL.md')):
+                  errs.append(f'no SKILL.md in {d}')
+              if not os.path.isfile(os.path.join(p, 'tests', 'scenarios.md')):
+                  errs.append(f'no tests/scenarios.md in {d}')
+          if errs:
+              sys.exit('; '.join(errs))
+          print('ok: SKILL.md and tests/scenarios.md in all skills')
+          PY
+      - name: "Skill descriptions — <=1024 chars, no colon-space (strict YAML)"
+        run: |
+          python3 - <<'PY'
+          import glob, re, sys
+          errs = []
+          for p in sorted(glob.glob('plugins/craftlight/skills/*/SKILL.md')):
+              skill = p.split('/')[-2]
+              m = re.search(r'^description:(.*)$', open(p).read(), re.M)
+              if not m:
+                  errs.append(f'{skill}: no description'); continue
+              d = m.group(1).strip()
+              if len(d) > 1024:
+                  errs.append(f'{skill}: description {len(d)} > 1024')
+              if ': ' in d:
+                  errs.append(f'{skill}: a colon-space in the unquoted description breaks strict YAML')
+          if errs:
+              sys.exit('\n'.join(errs))
+          print('ok: descriptions within limit and YAML-safe')
+          PY
+      - name: plugin.json version = top CHANGELOG entry
+        run: |
+          python3 - <<'PY'
+          import json, re, sys
+          v = json.load(open('plugins/craftlight/.claude-plugin/plugin.json'))['version']
+          m = re.search(r'^## \[(\d+\.\d+\.\d+)\]', open('CHANGELOG.md').read(), re.M)
+          assert m, 'no version entry in CHANGELOG'
+          if m.group(1) != v:
+              sys.exit(f'plugin.json {v} != top CHANGELOG entry {m.group(1)}')
+          print(f'ok: version {v} in sync with CHANGELOG')
+          PY
+      - name: Official validator (claude plugin validate)
+        run: |
+          npx -y @anthropic-ai/claude-code plugin validate plugins/craftlight
+          npx -y @anthropic-ai/claude-code plugin validate .
+
+      - name: Hook fixture tests
+        run: |
+          git config --global user.email ci@ci
+          git config --global user.name ci
+          python3 -m unittest discover -s plugins/craftlight/hooks/tests -v
+
+  graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decision-graph lint
+        run: |
+          python3 - <<'PY'
+          import glob, os, re, sys
+          errs = []
+          files = sorted(glob.glob('docs/graph/*.md'))
+          nodes = {os.path.basename(p)[:-3] for p in files} - {'_overview'}
+          ov = open('docs/graph/_overview.md').read()
+
+          # 1. [[wikilinks]] in nodes and CRAFT.md resolve to existing nodes
+          #    (literal placeholders like [[<slug>]] aren't links; filtered out by shape below)
+          for p in [f for f in files if not f.endswith('_overview.md')] + ['CRAFT.md']:
+              for target in re.findall(r'\[\[([^\]|#]+)\]\]', open(p).read()):
+                  if re.fullmatch(r'[a-z0-9-]+', target) and target not in nodes:
+                      errs.append(f'{p}: [[{target}]] does not resolve in docs/graph/')
+
+          # 2. Overview <-> nodes (1:1): every node in the Mermaid and the "## Nodes" list, none extra
+          mermaid = re.search(r'^```mermaid$(.*?)^```$', ov, re.S | re.M)
+          labels = set(re.findall(r'\[([\w-]+)\]', mermaid.group(1))) if mermaid else set()
+          sec = ov.split('## Nodes', 1)
+          listed = set(re.findall(r'\[\[([^\]|#]+)\]\]', sec[1])) if len(sec) > 1 else set()
+          for n in sorted(nodes):
+              if n not in labels: errs.append(f'{n}: missing from the overview Mermaid')
+              if n not in listed: errs.append(f'{n}: missing from the overview "Nodes" list')
+          for x in sorted(labels - nodes):
+              errs.append(f'overview: extra node {x} in Mermaid')
+          for x in sorted(listed - nodes):
+              errs.append(f'overview: extra [[{x}]] in the "Nodes" list')
+
+          # 3. Paths from `file:line` proofs exist (line numbers are fragile — not checked)
+          for p in files:
+              if p.endswith('_overview.md'): continue
+              for path in re.findall(r'`([\w./-]+):\d+(?:-\d+)?`', open(p).read()):
+                  if not os.path.isfile(path):
+                      errs.append(f'{p}: proof `{path}` — file missing')
+
+          if errs:
+              sys.exit('\n'.join(errs))
+          print(f'ok: {len(nodes)} nodes, wikilinks resolve, overview in sync, proofs exist')
+          PY
