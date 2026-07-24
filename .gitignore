@@ -12,3 +12,7 @@ node_modules/
 # python (hook fixture tests)
 __pycache__/
 *.pyc
+
+# specs
+docs/crafts/
+docs/reviews/

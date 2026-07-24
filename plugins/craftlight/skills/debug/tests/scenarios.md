@@ -5,7 +5,16 @@ Run after ANY change to `SKILL.md` / `templates/*`: parallel read-only subagents
 the right decision, but also quote the rule that determined it — otherwise the wording isn't
 discoverable. A divergence = the change broke the discipline: fix the skill's wording, not the scenario.
 
-Last run: 2026-07-23 FINAL CORPUS SWEEP (review №12 close-out) — all 22 scenarios against the finished corpus — 22/22 PASS. Earlier 2026-07-23 (DEBUG template, review №11) — behavior evicted from the template (escalation condition, fix-flow → playbook), form kept and completed: Root's four Output-contract fields, the `(from task)` row marker (seeds the log, not the change-of-angle tally), Repro as its own section, the status enum documented (no `draft`/`abandoned`, `dead-end` is the honest terminal), a meta-header. Ran the DEBUG template-form check — 1/1 PASS. Earlier 2026-07-23 (debug rework, review №7) — the boundary is now fix-shaped not edit-shaped (diagnostic edits allowed — logs/probe tests; fix edits forbidden; instrumentation stripped, repro test kept uncommitted and handed to task as the regression test), a side-effect stop rule added (prod data / external services / destructive ops → propose, not run — gate philosophy for experiments), Step 0 collapsed to "upsert only on DEBUG.md creation" (chat-only debug never touches CLAUDE.md) + FYI resume path, description + "From task" entry resynced to the two-rejects counter with counter independence named (task's rejects seed the log, not the tally; debug counts from zero), the return designed both ways (same-session return → task classification incl. risk-zone floor; direct → single-successor invoke), durable root → graph-candidate breadcrumb (wrap-sweep promotes it, node deferred until resolution), root depth floored at the repo boundary, "ask the user about history" raised into step 3, honest "didn't find it" trigger after a change of angle, predictive DEBUG.md escalation (compact/wrap-up) replacing the retrospective "outlived a session", bisect hygiene (stash + reset). Ran all 12 (10 reworked) + new 13–22 — 20/20 PASS, rules quoted verbatim. Earlier 2026-07-21 — full English translation of the plugin (SKILL.md + templates/* + this file): all 12 scenarios re-run — 12/12 PASS, decisions preserved and the governing rule quoted verbatim from the English files (doesn't-edit boundary, guess-without-prediction, no-repro-no-fix, three-rejected→change-of-angle, log-default/escalation to DEBUG.md, known-cause→task, symptom≠root, trust-the-observation, self-heal, resume from DEBUG.md, resume trigger). Earlier 2026-07-20 — resume for debug (leaf t2 of the lifecycle batch): new scenarios 10–12 (step 0 block upsert, resume DEBUG.md, resume trigger) + touched 6 — 4/4 PASS, the rules are quoted verbatim. Earlier 2026-07-17 — fix "task: " → "task — " in the description + tail (0.6.3): scenario 7 — 1/1 PASS, the route "cause known → task" is quoted verbatim. Earlier 2026-07-17 — first run after the skill's creation (plugin 0.6.0): all 9 — 9/9 PASS, every rule quoted verbatim, including the routing "cause known → task" from the description alone (scenario 7).
+Last run: 2026-07-24 (feedback-loop-first rework of step 1, craft
+`debug-feedback-loop`) — step 1 reworked into "Build the feedback loop" (one red-capable / deterministic /
+fast / agent-runnable command; no red-capable loop → no hypotheses; minimise until load-bearing; flaky →
+raise the reproduction rate; can't build → ask for artifacts, don't theorize without a loop), step 4 became
+"Generate a few, test one at a time" (2–3 ranked candidates against anchoring; testing still one at a time),
+step 5 consumes the loop (tool preference breakpoint > targeted log > probe test > bisect, never
+"log everything and grep"; perf → baseline first), probes tagged with one unique prefix (strip = single
+grep), stop rule reworded to "The loop is gone or flaky"; scenario 3 resynced to the new step-1 wording, new
+scenarios 23–29. Full sweep, all 29 — 29/29 PASS, every governing rule quoted verbatim. Earlier 2026-07-23
+FINAL CORPUS SWEEP (review №12 close-out) — all 22 scenarios against the finished corpus — 22/22 PASS. Earlier 2026-07-23 (DEBUG template, review №11) — behavior evicted from the template (escalation condition, fix-flow → playbook), form kept and completed: Root's four Output-contract fields, the `(from task)` row marker (seeds the log, not the change-of-angle tally), Repro as its own section, the status enum documented (no `draft`/`abandoned`, `dead-end` is the honest terminal), a meta-header. Ran the DEBUG template-form check — 1/1 PASS. Earlier 2026-07-23 (debug rework, review №7) — the boundary is now fix-shaped not edit-shaped (diagnostic edits allowed — logs/probe tests; fix edits forbidden; instrumentation stripped, repro test kept uncommitted and handed to task as the regression test), a side-effect stop rule added (prod data / external services / destructive ops → propose, not run — gate philosophy for experiments), Step 0 collapsed to "upsert only on DEBUG.md creation" (chat-only debug never touches CLAUDE.md) + FYI resume path, description + "From task" entry resynced to the two-rejects counter with counter independence named (task's rejects seed the log, not the tally; debug counts from zero), the return designed both ways (same-session return → task classification incl. risk-zone floor; direct → single-successor invoke), durable root → graph-candidate breadcrumb (wrap-sweep promotes it, node deferred until resolution), root depth floored at the repo boundary, "ask the user about history" raised into step 3, honest "didn't find it" trigger after a change of angle, predictive DEBUG.md escalation (compact/wrap-up) replacing the retrospective "outlived a session", bisect hygiene (stash + reset). Ran all 12 (10 reworked) + new 13–22 — 20/20 PASS, rules quoted verbatim. Earlier 2026-07-21 — full English translation of the plugin (SKILL.md + templates/* + this file): all 12 scenarios re-run — 12/12 PASS, decisions preserved and the governing rule quoted verbatim from the English files (doesn't-edit boundary, guess-without-prediction, no-repro-no-fix, three-rejected→change-of-angle, log-default/escalation to DEBUG.md, known-cause→task, symptom≠root, trust-the-observation, self-heal, resume from DEBUG.md, resume trigger). Earlier 2026-07-20 — resume for debug (leaf t2 of the lifecycle batch): new scenarios 10–12 (step 0 block upsert, resume DEBUG.md, resume trigger) + touched 6 — 4/4 PASS, the rules are quoted verbatim. Earlier 2026-07-17 — fix "task: " → "task — " in the description + tail (0.6.3): scenario 7 — 1/1 PASS, the route "cause known → task" is quoted verbatim. Earlier 2026-07-17 — first run after the skill's creation (plugin 0.6.0): all 9 — 9/9 PASS, every rule quoted verbatim, including the routing "cause known → task" from the description alone (scenario 7).
 
 ## 1. Diagnosis without a fix
 Given: `SKILL.md`. The root is found with a `file:line` proof, the fix is obvious and one line; the user:
@@ -22,8 +31,9 @@ Y I'll see Z"; quote "No testable prediction → it's a guess, not a hypothesis"
 ## 3. No repro — no fix
 Given: `SKILL.md`. The bug "sometimes crashes in prod", doesn't reproduce locally; the user pushes:
 "no time to reproduce, just fix the most likely thing".
-Expected: no blind fix — gather data (logs, traces, conditions) and narrow the conditions of occurrence;
-quote "Doesn't reproduce → don't fix blindly" (and/or ""Sometimes crashes" is not a repro").
+Expected: no blind fix — raise the reproduction rate and/or ask the user for artifacts (logs, traces, a HAR,
+a dump) or access to the reproducing environment; quote "don't theorize without a loop" (and/or ""Sometimes
+crashes" is not a repro").
 
 ## 4. Three rejected — a change of angle
 Given: `SKILL.md`. Three hypotheses in a row rejected by experiments; there's a temptation to test a fourth,
@@ -151,3 +161,49 @@ the user says "let's continue tomorrow").
 Expected: write/offer DEBUG.md now — the predictive triggers (compact happened / wrap-up) catch the loss before
 it happens, not the retrospective "outlived the session"; quote "a compact just happened → write DEBUG.md now;
 the user wraps up … → offer to save it".
+
+## 23. No red-capable loop — no hypotheses
+Given: `SKILL.md`. The bug is reported second-hand; no runnable repro command exists yet, and there's a
+temptation to read the suspect module and build a theory first.
+Expected: the loop is built first — theorizing from code before it exists is named as the failure; quote
+"no red-capable loop → no hypotheses" (and/or "reading code to build a theory before the loop exists is
+guess-and-patch in disguise").
+
+## 24. Red-capable ≠ runs without erroring
+Given: `SKILL.md`. The "repro" is a script that launches the app end-to-end and exits 0; the user's symptom
+(a wrong total in the export) is never asserted.
+Expected: the loop isn't done — it must assert the user's exact symptom, not merely run; quote "red-capable
+(it asserts the user's exact symptom, not "runs without erroring")".
+
+## 25. Flaky → raise the rate
+Given: `SKILL.md`. The failure shows roughly once per hundred runs locally; the temptation is to hunt for a
+clean always-red repro before proceeding.
+Expected: don't chase a clean repro — raise the reproduction rate until debuggable; quote "raise the
+reproduction rate — loop the trigger ×100, add stress, narrow the timing window — until it's debuggable".
+
+## 26. Minimise until load-bearing
+Given: `SKILL.md`. The loop is red but drags a 200-line fixture and three services; hypotheses are about to
+multiply over all of it.
+Expected: shrink first — one cut at a time, re-running the loop after each; done when nothing removable
+remains; quote "cut inputs, config, and steps one at a time, re-running the loop after each cut, until every
+remaining element is load-bearing".
+
+## 27. Tagged probes strip in one grep
+Given: `SKILL.md`. The diagnosis is ready; a dozen temporary log lines are scattered across five files and
+must now be stripped before hand-off.
+Expected: probes should have carried one unique prefix so stripping is a single grep — the honesty mechanism
+for "never committed"; quote "tag every probe with one unique prefix (e.g. `DBG-7f3`), so the strip is a
+single grep".
+
+## 28. Generate a few, test one at a time
+Given: `SKILL.md`. Right after reading the error one plausible cause comes to mind, and the urge is to
+instrument for it immediately.
+Expected: sketch 2–3 ranked candidates first (anti-anchoring), then still test strictly one at a time; quote
+"sketch 2–3 candidate causes and rank them: single-candidate generation anchors on the first plausible idea"
+(and/or "Testing stays strictly one at a time").
+
+## 29. Perf regression → baseline first
+Given: `SKILL.md`. "The dashboard got slow after the release"; the first impulse is to sprinkle timing logs
+through the request path.
+Expected: measure a baseline first (a timing harness, a profiler, a query plan) — for perf, logs are usually
+the wrong instrument; quote "A performance regression → measure a baseline first".

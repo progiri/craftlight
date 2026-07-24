@@ -117,5 +117,6 @@ graph LR
 - [[hooks-give-teeth]] — hooks return rules and state to the context (advisory-only: state-push + gate-nudge; fail-open)
 
 ## Unplaced
+- [[feedback-loop-first]] — debug
 - [[digest-derived-only]] — craft-graph
 - [[l-cap-executor-detail]] — L/PLAN caps protect the reader; the cut-priority protects executor detail

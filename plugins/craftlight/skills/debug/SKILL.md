@@ -1,6 +1,6 @@
 ---
 name: debug
-description: Systematic hunt for a bug's root cause without fixing it — reproduce, read the error in full, hypotheses with testable predictions, minimal experiments, a log of what was rejected; the root, once found, goes back to task for the fix. Use this skill when the cause of a breakage is unknown and needs to be found — "figure out why it doesn't work", "why does it crash", "strange behavior", "I can't tell what's going on", "flaky bug", "only reproduces in prod", "debug this", "why is this failing", "investigate this bug", "find the root cause" — even without the word "debug". Also trigger on resume — "let's continue debugging", "back to the bug", "resume debugging". Also self-select here from task's no-guess-and-patch stop rule — two fix hypotheses rejected, or a second failed experiment. Not for a task with a known cause ("fix X, it's because of Y" — that's task), not for a code review (code-review), and not for "how does this work" (a normal answer). debug makes the diagnosis — the cure is in task.
+description: Systematic hunt for a bug's root cause without fixing it — build a feedback loop that goes red on the bug, read the error in full, hypotheses with testable predictions, minimal experiments, a log of what was rejected; the root, once found, goes back to task for the fix. Use this skill when the cause of a breakage is unknown and needs to be found — "figure out why it doesn't work", "why does it crash", "strange behavior", "I can't tell what's going on", "flaky bug", "only reproduces in prod", "debug this", "why is this failing", "investigate this bug", "find the root cause" — even without the word "debug". Also trigger on resume — "let's continue debugging", "back to the bug", "resume debugging". Also self-select here from task's no-guess-and-patch stop rule — two fix hypotheses rejected, or a second failed experiment. Not for a task with a known cause ("fix X, it's because of Y" — that's task), not for a code review (code-review), and not for "how does this work" (a normal answer). debug makes the diagnosis — the cure is in task.
 ---
 
 # debug — the systematic root-cause hunt
@@ -14,7 +14,8 @@ main token-eater; a systematic pass is cheaper than three guesses.
 obvious one-liner; the root found → the fix goes through `task` (classification, the gate, a regression test).
 But diagnostic edits are the skill's own tools and are allowed: temporary log lines, probe tests, a narrow
 assertion. Two rules keep them honest: instrumentation is never committed and is stripped before the diagnosis is
-handed off; the reproduction test from step 1 is the exception — it is left uncommitted and passed to `task` as
+handed off — tag every probe with one unique prefix (e.g. `DBG-7f3`), so the strip is a single grep and no
+untagged stray survives; the reproduction test from step 1 is the exception — it is left uncommitted and passed to `task` as
 the ready-made regression test (task's fix begins red on it). The discipline's symmetry: plan plans and stops,
 code-review reads and doesn't edit, debug diagnoses and doesn't fix.
 
@@ -50,20 +51,36 @@ There's a `docs/crafts/*/DEBUG.md` with status `in-progress`:
 
 The order is mandatory — a skipped step is exactly guess-and-patch:
 
-1. **Reproduce.** A minimal reliable repro before any edits. Doesn't reproduce → don't fix blindly: gather
-   data (logs, traces, environment conditions) and narrow the conditions of occurrence. "Sometimes crashes"
-   is not a repro. This repro, as a test, is the regression test task will inherit — write it to keep.
+1. **Build the feedback loop.** The repro is one command — a test, a curl, a CLI run over a fixture — that
+   you have already run at least once and that is **red-capable** (it asserts the user's exact symptom, not
+   "runs without erroring"), deterministic, fast (seconds), and agent-runnable unattended. This step is the
+   hunt's center of gravity: every later step only consumes the loop — no red-capable loop → no hypotheses;
+   reading code to build a theory before the loop exists is guess-and-patch in disguise. Once it's red,
+   minimise: cut inputs, config, and steps one at a time, re-running the loop after each cut, until every
+   remaining element is load-bearing — a minimal loop shrinks the hypothesis space, and as a test it is the
+   regression test task will inherit; write it to keep. Flaky ("Sometimes crashes" is not a repro) → don't
+   chase a clean repro, raise the reproduction rate — loop the trigger ×100, add stress, narrow the timing
+   window — until it's debuggable. Genuinely can't build a loop → say so explicitly, list what you tried,
+   and ask the user for artifacts (logs, traces, a HAR, a dump, a recording) or access to the reproducing
+   environment; don't theorize without a loop.
 2. **Read the error in full.** The complete text, the stack trace to the end, the logs around the moment of
    failure. An error message is data, not noise: half of all roots are visible from a literal reading.
 3. **Check the obvious.** The right branch, the right env, a fresh build, a clean cache, the right dependency
    versions — and recent history: "when did it break, what changed?" is 'obvious' too, and asking the user is
    one of the cheapest experiments there is. A minute on "is it plugged in" saves an hour of false hypotheses.
-4. **One hypothesis at a time.** The formula: "if the cause is X, then under Y I'll see Z". No testable
-   prediction → it's a guess, not a hypothesis — don't test it with an experiment.
-5. **Minimal experiment.** The cheapest way to settle the prediction: a targeted log, a narrow probe test, a
-   binary search (over commits — git bisect, over data, over code). One factor at a time: change two and you
-   won't know which one worked. bisect needs a clean tree → stash the instrumentation first, and `git bisect
-   reset` when done, so the repo doesn't end stranded in detached HEAD.
+4. **Generate a few, test one at a time.** Before the first experiment, sketch 2–3 candidate causes and rank
+   them: single-candidate generation anchors on the first plausible idea, and showing the ranking to the user
+   is a cheap checkpoint — domain knowledge re-ranks it instantly. Testing stays strictly one at a time. The
+   formula: "if the cause is X, then under Y I'll see Z". No testable prediction → it's a guess, not a
+   hypothesis — don't test it with an experiment.
+5. **Minimal experiment.** An experiment is a run of the loop with one factor changed: change two and you
+   won't know which one worked. The cheapest probe that settles the prediction, in order of preference: a
+   debugger/REPL breakpoint where the environment offers one — one breakpoint beats ten logs; a targeted log
+   at a boundary that distinguishes the hypotheses; a narrow probe test; a binary search (over commits — git
+   bisect, over data, over code). Never "log everything and grep". A performance regression → measure a
+   baseline first (a timing harness, a profiler, a query plan): for perf, logs are usually the wrong
+   instrument. bisect needs a clean tree → stash the instrumentation first, and `git bisect reset` when done,
+   so the repo doesn't end stranded in detached HEAD.
 6. **Rejected → a line in the log, next.** Hypothesis, prediction, experiment, fact. The log keeps you from
    testing the same thing twice and makes the hunt resumable.
 7. **Root, not symptom.** The symptom vanished after fixing an effect — the classic false success: ask "why"
@@ -108,7 +125,7 @@ happened → write DEBUG.md now; the user wraps up ("let's continue tomorrow") �
   skill invites — the gate philosophy applies to experiments too.
 - **3 rejected hypotheses in a row** → stop: not a fourth guess, but a change of angle — a fresh read-only
   subagent's look at the repro+log, a question to the user about history, git bisect from the last working state.
-- **The repro is gone or flaky** → return to step 1: experiments without a stable repro mean nothing.
+- **The loop is gone or flaky** → return to step 1: experiments without a red-capable loop mean nothing.
 - **The root is in someone else's territory** (a library, infrastructure, an external service) → record the
   proof and stop: whether to work around it or fix upstream is the user's decision.
 - **An observation contradicts expectation** → trust the observation. "That can't be" means the model in your
