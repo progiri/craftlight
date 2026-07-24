@@ -11,8 +11,9 @@ Task: <docs/crafts/<slug>/SPEC.md or "standalone"> <!-- the bidirectional link t
 <!-- What is observed vs. expected. When it started, if known. 2–3 lines. -->
 
 ## Repro
-<!-- Minimal steps / the repro command or test; frequency (always / N of M runs); significant env conditions.
-     Its own section because resume re-runs it first (stop rule: repro gone → back to step 1). -->
+<!-- The loop: the one command (test / curl / CLI run) that goes red on this bug; reproduction rate (always /
+     N of M runs — for a flaky bug, the rate you raised it to); significant env conditions.
+     Its own section because resume re-runs it first (stop rule: loop gone → back to step 1). -->
 
 ## Observations
 <!-- Facts with proofs only: error messages, stack traces, log fragments, `file:line`. Interpretations → hypotheses. -->
