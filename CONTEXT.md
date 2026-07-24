@@ -31,3 +31,5 @@
   choice, it does not live silently.
 - **run** — a skill's regression check: parallel read-only subagents solve the scenarios and cite the
   rule; a rule that can't be discovered = red.
+- **feedback loop** — debug's step-1 artifact: one red-capable, deterministic, fast, agent-runnable
+  command that reproduces the bug; every experiment is a run of it.
