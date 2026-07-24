@@ -1,5 +1,7 @@
 # craftlight
 
+*[Русская версия →](README.ru.md)*
+
 A disciplined dev workflow for Claude Code in a single plugin. The shared principle of all the skills: **ceremony proportional to the task** — start light by default, escalate only on explicit observable signals. The main enemy is wasted tokens: subagents reloading context and blind loops of "tweaked at random — reran".
 
 ## Installation
