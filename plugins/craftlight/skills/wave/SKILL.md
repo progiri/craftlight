@@ -16,11 +16,12 @@ roughly ×N (measured: ~23–26 subagent tokens per token of the orchestrator's 
 context stays cheap — it gives you no feedback at all about the money spent. **Under 3 leaves, don't open a
 wave**: the ceremony pays only on a wide one, where it costs the slowest leaf rather than the sum.
 
-**Three deliberate revisions, stated rather than slipped through.** (1) M forbids execution subagents because
-each reloads the context — here that fan-out *is* the point, at the ×N price above. (2) A leaf does **not** enter
+**Two deliberate revisions, stated rather than slipped through.** (1) M forbids execution subagents because each
+reloads the context — here that fan-out *is* the point, at the ×N price above. (2) A leaf does **not** enter
 `task`'s router; it executes an already-approved spec, because `task`'s gate waits for the *user's* next message
 and a subagent has none — so the classification `task` owns happens at the wave's gate, done by you (step 3).
-(3) `plan`'s "a leaf = one branch, one PR" becomes one PR per wave (step 5).
+PR granularity is not a revision: `plan` already holds it — a leaf run solo lands its own PR, a leaf run inside
+a wave keeps its branch and the wave lands one PR (step 5).
 
 ## Step 0. Orientation and resume
 
@@ -120,8 +121,8 @@ error caught over a finished diff costs the wave.
 - **Only leaves the ok covered go to phase 2.** A leaf pulled out, judged L, or sent back for edits doesn't — and
   a **redraft re-enters a full gate**: showing it ends the turn again, however recently the others were approved.
 - **The ok goes to disk before any executor starts**: approved specs → `in-progress`, committed on the wave
-  branch; the PLAN's "Wave runs" row records the wave, its leaves and their state. An unrecorded stage boundary
-  is one a compaction erases.
+  branch; the PLAN's "Wave runs" gains this wave's block (`### Wave <N> — <wave branch>`) with its leaves and
+  their state. An unrecorded stage boundary is one a compaction erases.
 
 **The cross-leaf sweep, before phase 2.** Disjointness is what a wave is cut for and *all* it buys: two leaves
 can be file-disjoint and still collide in meaning — one writing a reference *into* a file the other rewrites, one
@@ -168,7 +169,8 @@ three at recon. Don't re-plan the wave around the straggler; the barrier is what
 ## Step 5. Integration — one merge agent per merge, sequential
 
 - **Topology.** Leaf branches merge back into the wave branch with `--no-ff` and **never squashed**, so a single
-  leaf stays revertible as its own commits. **Leaves open no PRs** — the wave lands exactly one.
+  leaf stays revertible as its own commits. **Leaves open no PRs** — the wave lands exactly one, which is
+  `plan`'s rule that PR granularity belongs to the run, not the leaf.
 - **Order:** the **referenced** leaf merges first, so the text pointing at it lands on final wording; otherwise
   smallest blast radius first. Merges are **sequential** — parallel merge agents race on one branch.
 - **A throwaway merge agent per merge**, working in the wave branch's worktree. A clean merge costs the
@@ -216,9 +218,10 @@ three at recon. Don't re-plan the wave around the straggler; the barrier is what
    files the wave touched for inbound pointers and fix the drifted ones. This touches the *reference* only — a
    line number, a link target; anything that changes behaviour is a leaf's spec or a separate `task`.
 3. **The PLAN**, committed from your default-branch checkout: leaf checkboxes (ticked in step 5, on observation),
-   the "Wave runs" row (merge order, per-leaf status, what stopped), and a Log paragraph — merge order, what the
-   gate corrected, what stopped and why. A leaf that left the wave is recorded there with its reason, its
-   checkbox untouched; a wave can close with an ejected leaf, but never with a silent one.
+   this wave's "Wave runs" block finished — the merge order actually taken, a line per leaf, `Stopped at` — and a
+   Log paragraph: what the gate corrected, what stopped and why. A leaf that left the wave is recorded there with
+   its reason, keeping its branch and its unticked checkbox; a wave can close with an ejected leaf, never with a
+   silent one.
 4. **One PR for the wave**, by proposal (proposing is not creating). Body: the wave's goal, its leaves, how each
    was verified. Say plainly whether a Full `code-review` is owed — **it is required before this PR merges when
    the wave carried a risk-zone leaf**, offered otherwise: one PR out of N leaves is exactly when review gets

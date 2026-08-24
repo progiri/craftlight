@@ -16,11 +16,11 @@ A wave's leaves are independent by construction, so they parallelize; nobody ran
 on a wide wave (the wave costs its slowest leaf, not the sum) is real. It is bought with tokens: every executor
 reloads the project's context, ~×N — measured at ~23–26 subagent tokens per token of orchestrator growth
 (`plugins/craftlight/skills/wave/SKILL.md:14`), which is why the skill refuses waves under 3 leaves.
-Three revisions are made **outright** rather than slipped past: M's ban on execution subagents (here the
-fan-out is the point), "a leaf = one branch, one PR" → one PR per wave, and a leaf **not** entering `task`'s
-router — `task`'s gate waits for the *user's* next message and a subagent has none, so a leaf executes an
-already-approved spec and the classification `task` owns moves to the wave's gate
-(`plugins/craftlight/skills/wave/SKILL.md:99-104`).
+Two revisions are made **outright** rather than slipped past: M's ban on execution subagents (here the fan-out
+is the point), and a leaf **not** entering `task`'s router — `task`'s gate waits for the *user's* next message
+and a subagent has none, so a leaf executes an already-approved spec and the classification `task` owns moves
+to the wave's gate (`plugins/craftlight/skills/wave/SKILL.md:99-104`). PR granularity is not among them:
+[[leaf-branch-not-pr]] already puts it on the run rather than the leaf.
 Rejected: a mode inside `plan` (mixes planning with execution); extending task-L's delegation (a leaf is its own
 branch, task is one branch); a launcher without integration (assembly should be automatic).
 
@@ -33,6 +33,7 @@ collide semantically, and a leaf's edit shifting `file:line` pointers elsewhere 
 
 ## Edges
 - depends-on [[plan-above-task]] <!-- wave exists because plan refuses to execute; it revises that node's "each leaf goes through task" clause, not its core -->
+- depends-on [[leaf-branch-not-pr]] <!-- a leaf keeps its branch; PR granularity belongs to the run -->
 - depends-on [[confirm-gate]]
 - depends-on [[risk-zone-min-m]]
 - depends-on [[context-pack-not-history]]
