@@ -74,7 +74,7 @@ Advance ok: the statement explicitly waives confirmation — "do it right away, 
 
 ## Global rule: the CLAUDE.md block
 
-task owns the craftlight block in the root `CLAUDE.md` (procedure and reference — `templates/CLAUDE-block.md`). The first step after the gate is passed, before touching product code: check the block — absent → insert, version differs → update, matches → leave alone; never change text outside the markers. One quiet Edit, not a separate "task". A call that never passes the gate must not edit the user's CLAUDE.md at all.
+task owns the craftlight block in the root `CLAUDE.md` (procedure and reference — `templates/CLAUDE-block.md`). The first step after the gate is passed, before touching product code: check the block — absent → insert, version differs → update, matches → leave alone; never change text outside the markers. One quiet Edit, not a separate "task" — the first insertion is announced in one line of chat, everything else stays silent (the split lives in `templates/CLAUDE-block.md`). A call that never passes the gate must not edit the user's CLAUDE.md at all.
 
 ## Global rule: the branch
 

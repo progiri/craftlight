@@ -86,7 +86,9 @@ the user gives a task to change code.
 Expected: the block is inserted per the reference — but only right after the confirmation gate is passed,
 not in step 0 and not before the user's ok; the user's existing text is preserved; quote "The first step
 after the gate is passed … absent → insert" (or "A call that never passes the gate must not edit the
-user's CLAUDE.md at all").
+user's CLAUDE.md at all"). The insertion is also announced to the user in one line of chat — a version match
+or bump would stay silent; quote "the first insertion is announced in one line of chat, everything else
+stays silent" (SKILL.md) or the "(announced)"/"(silent)" tags on CLAUDE-block.md's procedure steps.
 
 ## 12. Idempotency
 Given: the same. `CLAUDE.md` already contains a craftlight block of version `v10`.
