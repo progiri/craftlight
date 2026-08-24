@@ -15,8 +15,8 @@
   minimum M, and de-escalation does not bypass it.
 - **digest** — the derived analytical layer of the graph overview (hubs, tensions, questions →
   `[[slug]]`), computable from the nodes/edges; rebuilt only by craft-graph passes.
-- **block** — the managed craftlight block in CLAUDE.md between markers; its version is its own (currently v8),
-  not the plugin version.
+- **block** — the managed craftlight block in CLAUDE.md between markers; its version is its own, not
+  the plugin version — current value lives in `plugins/craftlight/skills/task/templates/CLAUDE-block.md`.
 - **self-heal** — the idempotent upsert of the block that every skill performs in its Step 0.
 - **node** — a decision/invariant/gotcha file in `docs/graph/` with a `file:line` proof, linked by
   `[[wikilink]]`s.
