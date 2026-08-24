@@ -91,12 +91,12 @@ or bump would stay silent; quote "the first insertion is announced in one line o
 stays silent" (SKILL.md) or the "(announced)"/"(silent)" tags on CLAUDE-block.md's procedure steps.
 
 ## 12. Idempotency
-Given: the same. `CLAUDE.md` already contains a craftlight block of version `v10`.
-Expected: the block isn't duplicated or changed; quote "version matches (`v10`) → do nothing".
+Given: the same. `CLAUDE.md` already contains a craftlight block of version `v11`.
+Expected: the block isn't duplicated or changed; quote "version matches (`v11`) → do nothing".
 
 ## 13. Version update, foreign text intact
 Given: the same. `CLAUDE.md` contains a craftlight block of an old version (`v0`) and a user paragraph outside the markers.
-Expected: the content between the markers is replaced with `v10`, the user paragraph is untouched; quotes "version differs →
+Expected: the content between the markers is replaced with `v11`, the user paragraph is untouched; quotes "version differs →
 replace everything between `craftlight:start` and `craftlight:end`" and "Never touch text outside the markers".
 
 ## 14. No CLAUDE.md
