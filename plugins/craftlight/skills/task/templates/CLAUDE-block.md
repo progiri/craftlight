@@ -10,13 +10,15 @@ writes no file must not touch CLAUDE.md.** The per-skill moment lives in each sk
 confirmation gate; the others — with their first artifact). This block is the canonical home of the *procedure*;
 the *when* is the skills'.
 
-CLAUDE.md is auto-loaded into context — check against it, don't re-read it needlessly. The edit is quiet, a single Edit,
-and is not announced as a separate "task".
+CLAUDE.md is auto-loaded into context — check against it, don't re-read it needlessly. The edit itself is always a
+single Edit, never a separate "task" — but whether the user hears about it in chat depends on the step: a first
+insertion (1–2) writes into a file the user may not even know exists yet, so it's announced with one line in chat;
+a version match or bump (3–4) is maintenance of text the user already consented to, so it stays silent.
 
-1. No root `CLAUDE.md` → create it with the single block below.
-2. No `craftlight:start` marker → insert the block (after the first heading, or at the end of the file).
+1. No root `CLAUDE.md` → create it with the single block below. (announced)
+2. No `craftlight:start` marker → insert the block (after the first heading, or at the end of the file). (announced)
 3. Marker present, version matches (`v10`) → do nothing.
-4. Marker present, version differs → replace everything between `craftlight:start` and `craftlight:end`, inclusive, with the reference.
+4. Marker present, version differs → replace everything between `craftlight:start` and `craftlight:end`, inclusive, with the reference. (silent)
 5. Never touch text outside the markers. Multiple CLAUDE.md files across the tree — only the root one.
 
 ## Reference block (inserted verbatim, from start to end inclusive)
