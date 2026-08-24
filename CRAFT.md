@@ -39,6 +39,7 @@ hooks are advisory-only, the discipline rests on prompts and artifacts, not on b
 - [[done-is-observed]] — "done" = an observed result, the unverified is flagged honestly
 - [[graph-recall]] — the graph is read before a decision (brief/plan/task recon starts with it)
 - [[plan-above-task]] — the planning layer above task (decomposing an initiative into waves)
+- [[leaf-branch-not-pr]] — a leaf is anchored on its branch, not on a PR: a wave run lands the wave as one PR
 - [[brief-above-plan]] — the decision layer above plan (decision by dialogue before the task, a file after the commit gate)
 - [[debug-inside-task]] — the diagnostic subcycle below task (root with proof, the fix goes through task again)
 - [[feedback-loop-first]] — debug's step 1 builds a red feedback loop; no red-capable loop → no hypotheses
