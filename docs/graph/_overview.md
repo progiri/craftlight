@@ -121,3 +121,4 @@ graph LR
 - [[feedback-loop-first]] — debug
 - [[digest-derived-only]] — craft-graph
 - [[l-cap-executor-detail]] — L/PLAN caps protect the reader; the cut-priority protects executor detail
+- [[wave-runs-plan-waves]] — wave; the execution layer for a plan's wave (parallel leaves, one batched gate)
