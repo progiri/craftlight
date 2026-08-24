@@ -8,7 +8,7 @@ Proof: `plugins/craftlight/skills/task/templates/CLAUDE-block.md:49-50`
 
 ## Gist
 A routing line added between the markers is paid for by compressing another one: the marker-to-marker line
-count stays where it was. v10 → v11 added the `wave` route and compressed the hooks bullet 2 lines → 1.
+count stays where it was. The bump that added the `wave` route paid with the hooks bullet, 2 lines → 1.
 
 ## Why
 Two independent reasons, and both have to hold. The block is auto-loaded into *every* context of *every*
