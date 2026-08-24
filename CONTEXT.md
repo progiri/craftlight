@@ -30,7 +30,8 @@
 - **orphan draft** — a spec draft on disk without a received ok; it is surfaced with a "resume or delete"
   choice, it does not live silently.
 - **run** — a skill's regression check: parallel read-only subagents solve the scenarios and cite the
-  rule; a rule that can't be discovered = red.
+  rule; a rule that can't be discovered = red. The bare word is always this sense; the execution sense is
+  the compound **wave run** below.
 - **feedback loop** — debug's step-1 artifact: one red-capable, deterministic, fast, agent-runnable
   command that reproduces the bug; every experiment is a run of it.
 - **wave run** — one invocation of `wave` over a single wave of a PLAN: a drafter fan-out, the batch gate,
