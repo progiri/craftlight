@@ -25,10 +25,12 @@ and waves right now".
 Expected: first the discussion of the nuances, the tree — only after an explicit "ok, build"; we write no files before the
 gate; quote "The tree is NOT built until the user explicitly says "ok, build"".
 
-## 4. Planner-only: after the plan we don't execute
+## 4. Planner-only: we don't execute — but we name the route
 Given: `SKILL.md`. The plan is ready, the waves are laid out. The user: "great, now do the first wave".
-Expected: plan doesn't execute and doesn't orchestrate — executing each leaf is a separate `task` call;
-plan stops; quote "The planner plans, doesn't execute … that's a separate `task` call, not plan".
+Expected: plan still doesn't execute and doesn't orchestrate — the ban is unchanged; running a whole wave is the
+`wave` skill one level down and **the user** starts it (leaf by leaf it's a separate `task` call), plan stops and
+calls neither on the user's behalf; quote "Zero code edits, zero orchestration — the ban is unchanged; what
+changed is that orchestration now has a home one level down: running a whole wave is the `wave` skill".
 
 ## 5. Flat leaf specs
 Given: `SKILL.md` + `templates/PLAN.md`. Initiative `payments-rewrite`, leaf `db-schema`. The temptation to
@@ -165,6 +167,30 @@ starting point, not something to relitigate (the parent-artifact hook…)".
 ## 25. PLAN cap and the cut-priority
 Given: `templates/PLAN.md`. A PLAN's planning part has grown near the cap; the bulkiest sections are the task
 table and "Contracts between tasks". The temptation to compress the contracts and drop table columns "to fit".
-Expected: the cap is 250 lines (Log/Outcome don't count) and the cut goes at prose first (Context,
+Expected: the cap is 250 lines (Log, Wave runs and Outcome don't count) and the cut goes at prose first (Context,
 Discussion-decisions wording), NEVER the task table, the DAG, or the Contracts between tasks; quote the PLAN
 file-form "cut prose first … NEVER the task table, the DAG, or the Contracts between tasks".
+
+## 26. A leaf keeps its branch; PR granularity depends on the run
+Given: `SKILL.md`. Leaves `db-schema` and `api-skeleton` sit in one wave, and the user intends to run that wave
+as a wave — one PR for the whole wave. The temptation: "one PR = one task", so the two leaves should be merged
+into a single leaf.
+Expected: no — a leaf is one future `task`: one branch, one spec; PR granularity is not the leaf's property —
+run inside a wave, the wave lands as one PR while each leaf still keeps its own branch and stays separately
+revertible; quote "A leaf = exactly one future `task`: **one branch, one spec**. PR granularity is not the
+leaf's property".
+
+## 27. The Files/area hint, and what disjointness does not buy
+Given: `SKILL.md` + `templates/PLAN.md`. Wave 2 holds three leaves; their `Files/area` cells don't overlap, and
+the planner is about to declare the wave safe to run in parallel on that basis alone.
+Expected: the hint is filled per leaf (the folders it is expected to touch) and it is exactly what lets a wave be
+sanity-checked before the run — but it's a hint, not a fence: file-disjoint is not the same as semantically
+independent (a leaf can write a reference into another's file, or shift the line an anchor elsewhere points at);
+quote "file-disjoint is not the same as semantically independent".
+
+## 28. "Wave runs" is laid out, not filled
+Given: `SKILL.md` + `templates/PLAN.md`. Writing the PLAN at step 4; no wave has been run yet. The temptation to
+pre-fill "Wave runs" with the planned merge order — or to drop the section as empty ceremony.
+Expected: plan lays the section out empty (and the per-wave `Wave branch` field with it); filling it — merge
+order, per-leaf status, what stopped — is the `wave` run's job, plan plans and doesn't run waves; quote "Laid
+out EMPTY by plan and filled by the `wave` skill as a wave is run — plan plans, it doesn't run waves".
