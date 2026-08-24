@@ -5,7 +5,7 @@ prompt without the "Expected"; the agent decides and **quotes the rule** that de
 otherwise the wording isn't discoverable. A divergence = the change broke the discipline: fix the
 skill's wording, not the scenario.
 
-Last run: PENDING — first run of the new corpus.
+Last run: 2026-08-25 (first corpus for the seventh skill, craft wave-scenarios / leaf t4 of PLAN wave-orchestrator) — 22 scenarios written against `wave/SKILL.md` as landed by t2 (263 lines, single-mode, `e123c6e`), covering the boundary vs `task` and the description trigger; the ×N economics floor (under 3 leaves, no wave); the gate (can't be skipped or inferred, no advance ok, showing ends the turn); risk-zone approval by name and the risk verdict being the orchestrator's rather than the PLAN flag's; an L-sized leaf ejecting from the wave; the pack-is-the-prompt rule on both fan-outs (drafter write-path leak, executor spec inline); the executor's risk-zone stop and the orchestrator's no-respawn-no-finish answer to it; leaves opening no PRs; the merge agent aborting on a semantic conflict instead of resolving it; the verification split (orchestrator runs the tests against the merged tree before any checkbox) and its honest-unticked fallback; resume from the PLAN + git rather than chat history; no re-execution of a leaf branch that already has commits; one wave per invocation; wave writes no code; divergence handed back to `plan`; file-disjoint ≠ semantically independent; the drafter's pack carrying the executor's constraints; the line-anchored reference sweep at close. Before the run, every "Expected" quote was grepped against SKILL.md and two were corrected (scenario 12 had quoted across an ellipsis, scenario 13 had misplaced `**` markers) — the corpus quotes only contiguous, literal text. Ran all 22 as parallel read-only sonnet subagents, each given its Given block with the "Expected" stripped — 22/22 PASS, every governing rule quoted verbatim, no red: no rule in this skill was undiscoverable to a cold reader. Three agents volunteered correct rules beyond the Expected (sc.13 noticed the executor summary "all tests pass, the feature works" carries no checkable verbatim quote to grep for and flagged that as its own gap; sc.21 also caught the pack's missing BRIEF constraints and scope-boundary line; sc.4 chained the gate to the cross-leaf sweep unprompted) — evidence the surrounding wording carries, not just the sentence under test. Scope of the claim, stated honestly: this run tests whether a cold reader can *discover and cite* each rule from the wording, and nothing more — it does not exercise `wave` against a live PLAN, real worktrees, or actual merge agents; the prototype run recorded in the initiative's PROTO.md remains the only end-to-end evidence, and scoring here is the orchestrator's judgement against "Expected", not an automated assertion.
 
 ## 1. Boundary: one large task is task, not wave
 Given: only `SKILL.md`. Request: "refactor the `billing/` module — rename the entities, split them across
@@ -164,8 +164,8 @@ stays plan-free.** wave doesn't re-cut the DAG, add leaves, or nest a plan. Real
 stop and hand back to `plan`".
 
 ## 20. File-disjoint is not semantically independent
-Given: `SKILL.md`. Every draft is in hand; the leaves' file sets don't overlap at all, so the wave looks safe
-to fan out immediately.
+Given: `SKILL.md`. Every draft is in hand and the gate's ok has arrived; the leaves' file sets don't overlap at
+all, so the wave looks safe to fan out immediately.
 Expected: run the cross-leaf sweep first — read the file sets together for references from A's new text into
 B's files, a shared invariant, a value one defines and another quotes; disjointness buys clean textual merges
 and nothing else; found one → name the dependency in both packs or serialize the two leaves, recorded in the
