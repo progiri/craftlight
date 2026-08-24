@@ -44,5 +44,7 @@ This block is managed by craftlight (v11); edits inside the markers are overwrit
 <!-- craftlight:end -->
 
 <!-- The block version (v11) is its own, NOT the plugin version: it is incremented only when the block text changes,
-     so that a plugin update doesn't rewrite everyone's CLAUDE.md without reason. Change the text above → bump the version
-     in both marker lines and in the task/tests scenarios. -->
+     so that a plugin update doesn't rewrite everyone's CLAUDE.md without reason. Change the text above → bump all four
+     version literals (procedure step 3, the start marker, the closing sentence, this comment) and the task/tests scenarios.
+     The block is always in context: a new line earns its place by replacing waffle, not by appending — and a marker-to-marker
+     line count that stays put is also what keeps the graph nodes proving into this file at valid line numbers. -->
