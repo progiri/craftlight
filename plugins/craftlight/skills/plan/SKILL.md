@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Planning and decomposing a large initiative that breaks into several separate tasks — discuss the nuances, build a tree (DAG) of tasks with dependencies, and lay it out into waves of parallel execution. Use this skill when the scope is not "one task" but an epic of many tasks — the observable boundary is the work splitting into several independent tasks, each with its own branch and spec — "plan this out", "break the big task down", "decompose the epic", "draft a work plan", "roadmap", "where to start in this big feature", "this is too big for one task", "split it into stages", "plan the refactor of the whole module", "break this epic down" — even without the words "plan" or "skill". Also trigger on a request to continue planning — "continue the plan", "back to the plan", "where are we in the plan". Not for a single task, even a large one (that's `task`, modes S/M/L), not for a review (`code-review`), and not for recording decisions as a graph (`craft-graph`).
+description: Planning and decomposing a large initiative that breaks into several separate tasks — discuss the nuances, build a tree (DAG) of tasks with dependencies, and lay it out into waves of parallel execution. Use this skill when the scope is not "one task" but an epic of many tasks — the observable boundary is the work splitting into several independent tasks, each classified and branched on its own — "plan this out", "break the big task down", "decompose the epic", "draft a work plan", "roadmap", "where to start in this big feature", "this is too big for one task", "split it into stages", "plan the refactor of the whole module", "break this epic down" — even without the words "plan" or "skill". Also trigger on a request to continue planning — "continue the plan", "back to the plan", "where are we in the plan". Not for a single task, even a large one (that's `task`, modes S/M/L), not for a review (`code-review`), and not for recording decisions as a graph (`craft-graph`).
 ---
 
 # plan — decomposing an initiative into waves of tasks
@@ -73,8 +73,8 @@ high, so we discuss iteratively.
 
 ## Step 2. The task DAG
 
-After the gate, break the initiative into **leaf tasks**. A leaf = exactly one future `task`: **one branch, one
-spec**. PR granularity is not the leaf's property — run solo, a leaf lands as its own PR; run inside a wave, the
+After the gate, break the initiative into **leaf tasks**. A leaf = exactly one future `task` call, **on its own
+branch** (classified S/M/L on its own too). PR granularity is not the leaf's property — run solo, a leaf lands as its own PR; run inside a wave, the
 whole wave lands as one PR and the leaf still keeps its own branch, so it stays separately revertible. For each
 leaf: `id`, a one-line goal in system terms, a size estimate S/M/L (**a hint** for planning the waves — `task`
 does the real classification at start), a files/area hint (the folders it is expected to touch), a list of
