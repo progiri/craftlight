@@ -49,3 +49,4 @@ hooks are advisory-only, the discipline rests on prompts and artifacts, not on b
 - [[hooks-give-teeth]] — hooks return rules and state to the context (advisory-only, fail-open)
 - [[digest-derived-only]] — the overview Digest is derived from the nodes, no claims of its own
 - [[l-cap-executor-detail]] — L/PLAN caps protect the reader; the cut-priority protects executor-grade detail
+- [[block-earns-its-lines]] — the CLAUDE block doesn't grow: a new line is paid for by compressing another
