@@ -8,44 +8,46 @@ description: Running one wave of a PLAN in parallel — a fan-out of spec drafte
 Principle: **wave sits BESIDE `task`, under `plan`.** `plan` lays an initiative out into waves and stops at
 hand-off; `task` runs one leaf; wave runs **one wave** — N independent leaves in parallel, each a subagent in its
 own worktree, **one** human gate over the whole wave, one PR at the end. It is the execution layer plan
-deliberately refuses to be.
+deliberately refuses to be. Not for this skill: one task, however large → `task`; building or re-cutting the DAG
+→ `plan`; a single leaf → a plain `task` call; review → `code-review`.
 
 What you buy is **wall-clock, not tokens**: every executor reloads the project's context, so a wave's spend grows
-roughly ×N — measured, ~23–26 subagent tokens per token of the orchestrator's own growth. The orchestrator's
-context stays cheap and therefore gives you no feedback at all about the money being spent. **Under 3 leaves,
-don't open a wave** — run them as ordinary `task` calls; the ceremony pays for itself only on a wide wave, and
-then it costs the slowest leaf rather than the sum.
+roughly ×N (measured: ~23–26 subagent tokens per token of the orchestrator's own growth) while the orchestrator's
+context stays cheap — it gives you no feedback at all about the money spent. **Under 3 leaves, don't open a
+wave**: the ceremony pays only on a wide one, where it costs the slowest leaf rather than the sum.
 
-Not for this skill: one task, however large → `task`; building or re-cutting the DAG → `plan`; a single leaf → a
-plain `task` call; review → `code-review`. The leaves turn out not to be independent → stop, back to `plan`.
+**Three deliberate revisions, stated rather than slipped through.** (1) M forbids execution subagents because
+each reloads the context — here that fan-out *is* the point, at the ×N price above. (2) A leaf does **not** enter
+`task`'s router; it executes an already-approved spec, because `task`'s gate waits for the *user's* next message
+and a subagent has none — so the classification `task` owns happens at the wave's gate, done by you (step 3).
+(3) `plan`'s "a leaf = one branch, one PR" becomes one PR per wave (step 5).
 
 ## Step 0. Orientation and resume
 
 There's a `CRAFT.md` → read it first, then the initiative's plan at `docs/crafts/<initiative>/PLAN.md`. **The PLAN
 is the wave's external memory:** a wave interrupted mid-run resumes from the PLAN and from git, never from chat
-history — a compaction eats the chat and leaves the artifacts. The craftlight block upsert in the root
-`CLAUDE.md` (procedure — `skills/task/templates/CLAUDE-block.md`) rides with wave's first write to disk, whichever
-comes first — the PLAN append below or phase 1's specs — and never before one of them.
+history — a compaction eats the chat and leaves the artifacts. The craftlight block upsert in the root `CLAUDE.md`
+(procedure — `skills/task/templates/CLAUDE-block.md`) rides with wave's first write to disk, whichever comes
+first — the PLAN append below or phase 1's specs — and never before one of them.
 
 - **Read the state, don't recall it:** the PLAN's checkboxes and "Wave runs" section (merge order, per-leaf
   status, what stopped) + `git branch --list 'wave/*' 'task/*'` + `git worktree list` + the leaf specs on disk
   (`draft` = gate not passed, `in-progress` = approved and running, `done` = merged and verified). That triple
   names the first unfinished stage; continue there.
 - A leaf branch with commits but unmerged → its executor finished or stopped: read its spec status and
-  `git log --oneline <branch>` before deciding — verify and merge it as a finished leaf (step 5), or report it
-  and ask. **Never respawn an executor for a leaf whose branch already has commits, on that branch or a fresh
-  one** — a finished or stopped leaf goes *through* the stop rules, not around them.
-- An older PLAN without a "Wave runs" section or a `Wave branch` field → append them, don't fail on their absence.
-- **Resume never rolls forward.** "Continue the wave" means the wave already in flight. Every leaf of it is
-  ticked → the run is over: report and stop. The next wave is one the user names.
-- A wave in flight and the message brings something else → one FYI line: `parked: wave <N> of "<initiative>" is
-  in flight — say "continue the wave" to get back to it`.
+  `git log --oneline <branch>` before deciding — verify and merge it as a finished leaf (step 5), or report and
+  ask. **Never respawn an executor for a leaf whose branch already has commits, on that branch or a fresh one**:
+  a finished or stopped leaf goes *through* the stop rules, not around them.
+- A PLAN with no "Wave runs" section or `Wave branch` field → append them, don't fail on their absence.
+- **Resume never rolls forward.** "Continue the wave" means the one already in flight; every leaf of it ticked →
+  report and stop. The next wave is one the user names. Something else arrives mid-wave → one FYI line:
+  `parked: wave <N> of "<initiative>" is in flight — say "continue the wave" to get back to it`.
 - **Precondition:** every dependency of this wave's leaves is closed (earlier waves ticked) and the leaves still
-  match the PLAN. Not so → say it in one line and stop; a wave started over an open dependency merges garbage.
+  match the PLAN. Not so → say it in one line and stop; a wave over an open dependency merges garbage.
 
 ## Step 1. Wave setup
 
-- **Pick the wave:** the user named one → that one; otherwise the first wave with unclosed leaves. One per run.
+- **Pick the wave:** the user named one → that one; otherwise the first wave with unclosed leaves.
 - **Topology.** Your own checkout stays on the **default branch** — that's where PLAN edits are committed. The
   wave branch and every leaf get a worktree of their own, created by hand:
 
@@ -55,19 +57,23 @@ git worktree add <wt-root>/wave  wave/<initiative>-w<N>
 git worktree add <wt-root>/<leaf> -b task/<leaf> wave/<initiative>-w<N>   # one per leaf
 ```
 
-  `<wt-root>` = `.worktrees/` when it is git-ignored, otherwise `../<repo>-wt/` outside the repo — an in-repo
-  worktree that git tracks would dirty the tree. A branch can only be checked out once, which is why the wave
-  branch needs its own worktree: it is where every merge happens. Write the wave branch into the PLAN's
-  `Wave branch` field. Never use the Agent tool's `isolation: "worktree"` — it gives the agent a *throwaway*
-  worktree of its own and defeats a named-branch topology entirely.
-- **The Agent tool takes no `cwd`** — every agent prompt carries the absolute worktree path, the instruction to
-  prefix every git command with `git -C <abs> …`, and an explicit ban on touching any other checkout: two
-  checkouts of one repo, one wrong path from corruption.
-- **Recon once, for the whole wave:** the file paths each leaf will touch, the project's test command, the
-  `active` nodes in `docs/graph/` on the wave's topics. What you learn here is what the packs carry — N executors
-  re-deriving it is exactly the ×N multiplier.
+  `<wt-root>` = `.worktrees/` when it is git-ignored (task-L's location, plus the ignore check), otherwise
+  `../<repo>-wt/` outside the repo — an in-repo worktree git tracks would dirty the tree. A branch can be checked
+  out once, which is why the wave branch needs its own worktree: it is where every merge happens. Write it into
+  the PLAN's `Wave branch` field. `task/<leaf>` already exists → either this leaf's earlier run (the resume rule
+  above) or a foreign branch: foreign → `task/<leaf>-w<N>`, never reuse.
+- **You cannot set a subagent's working directory.** Every agent prompt therefore carries the absolute worktree
+  path, `git -C <abs> …` for every git command, and a ban on touching any other checkout — two checkouts of one
+  repo, one wrong path from corruption. Never use the Agent tool's `isolation: "worktree"` either: it gives the
+  agent a *throwaway* worktree and defeats a named-branch topology.
+- **Recon once, for the whole wave:** each leaf's file paths, the project's test command, the `active` nodes in
+  `docs/graph/` on the wave's topics (`_overview.md` first; `superseded` is history, a `verify` node keeps its
+  mark into the pack). What you learn here is what the packs carry — N executors re-deriving it is the ×N
+  multiplier.
 
 ## Step 2. Phase 1 — the drafter fan-out
+
+(The wave's two phases are its fan-outs — not task-L's phases, which live inside one leaf.)
 
 One drafter per leaf, all in parallel, each a `general-purpose` subagent given its pack **inline in the prompt**.
 Never hand a drafter a write path inside a shared folder: naming a path hands over everything co-located with it,
@@ -83,45 +89,46 @@ drafter given only its chore writes its executor a "run the tests and tick it of
 split forbids. Spell out: no verification or checkbox items, no PR, no touching the PLAN or files its own spec
 doesn't list, no gate of its own; scope is this leaf alone.
 
-Output: **the spec as text in the reply**, per the SPEC template, status `draft`, with `task`'s S/M/L
-classification. **The orchestrator writes the file** to `docs/crafts/<leaf-slug>/SPEC.md` — flat neighbours,
-never nested, so `task`'s resume glob (`docs/crafts/*/SPEC.md`) finds them. This costs nothing (the gate makes
-you read every spec in full anyway) and removes the filesystem leak.
+Output: **the spec as text in the reply**, per the SPEC template, status `draft`. **You write the file** to
+`docs/crafts/<leaf-slug>/SPEC.md` — flat neighbours, never nested, so `task`'s resume glob
+(`docs/crafts/*/SPEC.md`) finds them — filling the `Branch:` field with that leaf's branch. This costs nothing
+(the gate makes you read every spec in full anyway) and removes the filesystem leak. A leaf whose work is
+S-sized still gets a spec: the gate and the pack both need one, written as an M spec with a short checklist.
 
 ## Step 3. The wave gate — one ok, over drafts
 
 The gate sits over **drafts**, before any executor runs: a drafting error caught here costs a redraft; the same
 error caught over a finished diff costs the wave.
 
-- **Judge every draft yourself, before showing it.** The PLAN's risk flag and the drafter's mode are *inputs, not
-  the verdict*: re-read each draft against the risk-zone list (auth/secrets, money, migrations & data deletion,
-  PII, concurrency invariants, external API contracts) and against `task`'s size signals. A leaf that is really
-  **L** — phases, architectural decisions, >10 files — **leaves the wave** whatever the drafter labelled it: L's
-  checkpoints end the turn with the *user*, and a subagent has none. One missed risk flag disables three guards
-  at once (by-name approval, the extra review pass, the mandatory `code-review`), so this judgement is yours.
-- **Show every spec in one message** — the **full text of each pasted into the message**. A path, a link, or your
-  own summary is not showing: a gate puts the artifact in front of the user. With them: the cross-leaf sweep, the
-  proposed merge order, and anything you corrected in a draft.
+- **Judge every draft yourself, before showing it.** The PLAN's risk flag and the drafter's own label are
+  *inputs, not the verdict*: re-read each draft against the risk-zone list (auth/secrets, money, migrations &
+  data deletion, PII, concurrency invariants, external API contracts) and against `task`'s size signals. One
+  missed risk flag disables three guards at once — by-name approval, the extra review pass, the review owed
+  before merge. A leaf that is really **L** (phases, architectural decisions, >10 files) **leaves the wave**
+  whatever it was labelled: L's checkpoints end the turn with the *user*, and a subagent has none.
+- **Show every spec in one message** — the **full text of each pasted in**; a path, a link, or your own summary
+  is not showing. With them: the cross-leaf sweep, the proposed merge order, anything you corrected in a draft.
 - **Label each risk-zone spec as such, naming which zone it enters** — an ok that merely enumerates leaf names
-  has not been told there was a risk to approve.
+  was never told there was a risk to approve.
 - **Showing the specs ends the turn.** The ok arrives as the user's next message; silence is not ok. No next
   message is possible (an unattended run) → the wave stops here, and stopping is the correct outcome.
-- **No advance ok covers a wave gate:** when such an ok could be given, the specs it would waive don't exist yet.
+- **No advance ok covers a wave gate** — a deliberate tightening of `task`'s advance-ok rule: when such an ok
+  could be given, the specs it would waive don't exist yet.
 - **Risk-zone specs are approved by name.** An ok that doesn't name them approves the rest of the wave, not them;
   blanket enthusiasm ("go ahead", "looks great") is not naming. Showing such a spec, name both options: approve
-  it by name, or pull the leaf out into its own `task` session.
+  it by name, or pull the leaf into its own `task` session.
 - **Only leaves the ok covered go to phase 2.** A leaf pulled out, judged L, or sent back for edits doesn't — and
   a **redraft re-enters a full gate**: showing it ends the turn again, however recently the others were approved.
-- **The ok is written to disk before any executor starts**: approved specs → status `in-progress`, committed on
-  the wave branch; the PLAN's "Wave runs" row records the wave, its leaves and their state. The gate is a stage
-  boundary, and an unrecorded boundary is one a compaction erases.
+- **The ok goes to disk before any executor starts**: approved specs → `in-progress`, committed on the wave
+  branch; the PLAN's "Wave runs" row records the wave, its leaves and their state. An unrecorded stage boundary
+  is one a compaction erases.
 
-**The cross-leaf sweep, before phase 2.** File-disjointness is what a wave is cut for and it is *all* it buys:
-two leaves can be perfectly disjoint and still collide in meaning — one writing a reference *into* a file the
-other rewrites, one relying on text the other deletes. With every draft in hand, read the file sets together and
-look for references from A's new text into B's files, a shared invariant, a value one defines and another quotes.
-Found one → name the dependency in both packs (who owns the final wording) or serialize the two leaves inside
-this wave, recording it in the PLAN's Log. Any change to *which leaves exist or what they own* goes back to `plan`.
+**The cross-leaf sweep, before phase 2.** Disjointness is what a wave is cut for and *all* it buys: two leaves
+can be file-disjoint and still collide in meaning — one writing a reference *into* a file the other rewrites, one
+relying on text the other deletes. With every draft in hand, read the file sets together: references from A's new
+text into B's files, a shared invariant, a value one defines and another quotes. Found one → name the dependency
+in both packs (who owns the final wording) or serialize the two leaves inside this wave, recorded in the PLAN's
+Log. Any change to *which leaves exist or what they own* goes back to `plan`.
 
 ## Step 4. Phase 2 — the executor fan-out
 
@@ -148,20 +155,20 @@ One executor per approved leaf, all in parallel, `general-purpose`, pack **inlin
 > explicit `git add <files>`, never `-A`, never squashed. Do not run the wave's verification and do not tick
 > anything off — the orchestrator runs the tests and owns the checkboxes. Report only the observed: didn't
 > verify → say so; "should work" is forbidden; quote the final text of what you wrote verbatim instead of
-> paraphrasing it. **Stop and report back, leaving the work as it stands**, on any of: you reach into the risk
-> zone (auth/secrets, money, migrations & data deletion, PII, concurrency invariants, external API contracts)
-> beyond what your spec names outright; a second rejected fix hypothesis or a second failed experiment; the
-> change needs a file or a decision outside your spec; you find another leaf's work colliding with yours — a
-> collision between leaves is a planning signal, not yours to resolve.
+> paraphrasing it. A fix hypothesis failed → stop guessing: reproduce it, read the error in full, form a new
+> hypothesis and test it minimally. **Stop and report back, leaving the work as it stands**, on any of: you reach
+> into the risk zone (auth/secrets, money, migrations & data deletion, PII, concurrency invariants, external API
+> contracts) beyond what your spec names outright; a second rejected fix hypothesis or a second failed
+> experiment; the change needs a file or a decision outside your spec; you find another leaf's work colliding
+> with yours — a collision between leaves is a planning signal, not yours to resolve.
 
 Wall clock is the slowest leaf, and leaf size isn't knowable in advance — a leaf that read as one file becomes
 three at recon. Don't re-plan the wave around the straggler; the barrier is what a wave costs.
 
 ## Step 5. Integration — one merge agent per merge, sequential
 
-- **Topology (M1).** Leaf branches merge back into the wave branch with `--no-ff` and **never squashed**, so a
-  single leaf stays revertible as its own commits. **Leaves open no PRs** — the wave lands exactly one. This is a
-  deliberate revision of `plan`'s "a leaf = one branch, one PR" for leaves run inside a wave.
+- **Topology.** Leaf branches merge back into the wave branch with `--no-ff` and **never squashed**, so a single
+  leaf stays revertible as its own commits. **Leaves open no PRs** — the wave lands exactly one.
 - **Order:** the **referenced** leaf merges first, so the text pointing at it lands on final wording; otherwise
   smallest blast radius first. Merges are **sequential** — parallel merge agents race on one branch.
 - **A throwaway merge agent per merge**, working in the wave branch's worktree. A clean merge costs the
@@ -181,26 +188,29 @@ three at recon. Don't re-plan the wave around the straggler; the barrier is what
 > conflict and how it went.
 
 - **A merge that stopped stops that leaf, not the wave's other merges.** Show the user both sides: a semantic
-  conflict between leaves means the wave was cut wrong, and resolving it is a decision — an ordinary `task` on
-  the wave branch, or back to `plan`. Resolving it silently hides a planning defect.
+  conflict between leaves means the wave was cut wrong, and settling it is a decision — an ordinary `task` on the
+  wave branch, or back to `plan`. Settling it silently hides a planning defect.
 - **The verification split.** The merge agent merges and reports; **you** verify, against the **merged tree**,
   never the leaf branch (that tests text nobody has agreed to integrate):
   1. run the project's tests/scenarios yourself;
   2. grep the merged tree for **each verbatim quote** from the leaf's summary — `git diff --stat` shows filenames
      and confirms nothing about content, so it never settles a claim on its own;
   3. skim `git log --oneline --stat <task/leaf>` — a commit per checklist item, nothing foreign staged.
-- **Only then tick the leaf's PLAN checkbox. A checkbox never rests on an agent's claim** — `[[done-is-observed]]`
-  at the wave's scale. Trust doesn't remove verification; specific claims make it cheap.
+- **Only then tick the leaf's PLAN checkbox, and set its spec to `done` with a one-line Outcome. A checkbox never
+  rests on an agent's claim** — "done" is what you observed, at the wave's scale. Trust doesn't remove
+  verification; specific claims make it cheap.
 - A **risk-zone leaf** gets one more pass: a fresh subagent *reviewing* just those spots (hand it that diff plus
   the leaf's criteria, not the whole context). That is a review, not the verification — the test run and the
   checkbox stay yours.
+- **The executors' foreign findings** (each summary's "noticed, out of scope" lines) → `docs/crafts/_backlog.md`,
+  one line each. N executors produce them; nobody else will catch them.
 
 ## Step 6. Closing the wave
 
 1. **A full run of the affected suite** against the wave branch head — per-leaf runs don't cover interactions.
-   "Affected" = every suite covering any file any leaf touched; can't scope it → run the whole suite. Red →
-   untick nothing silently: name the leaves whose interaction it implicates and hand it to `task` (or `debug`
-   when the cause is unknown). A red wave doesn't close.
+   "Affected" = every suite covering any file any leaf touched; can't scope it → run the whole suite. Red → name
+   the leaves whose interaction it implicates and hand it to `task` (or `debug` when the cause is unknown). A red
+   wave doesn't close.
 2. **Line-anchored references.** A leaf's edit silently shifts every `file:line` pointer *into* that file —
    graph-node proofs, docs, cross-file references — and both the leaf and the merge are blind to it. Sweep the
    files the wave touched for inbound pointers and fix the drifted ones. This touches the *reference* only — a
@@ -211,37 +221,36 @@ three at recon. Don't re-plan the wave around the straggler; the barrier is what
    checkbox untouched; a wave can close with an ejected leaf, but never with a silent one.
 4. **One PR for the wave**, by proposal (proposing is not creating). Body: the wave's goal, its leaves, how each
    was verified. Say plainly whether a Full `code-review` is owed — **it is required before this PR merges when
-   the wave carried a risk-zone leaf**, offered otherwise: M1 makes one PR out of N leaves, exactly when review
-   gets coarse.
+   the wave carried a risk-zone leaf**, offered otherwise: one PR out of N leaves is exactly when review gets
+   coarse.
 5. **Cleanup, in this order:** `git worktree remove` every leaf worktree now; **keep the leaf branches until the
-   wave's PR merges** — they are the revert granularity the no-squash rule bought — then delete them. Leave no
-   orphaned worktrees.
-6. **CRAFT.md, the graph, the glossary** — `task`'s global wrap rule, owned here: a leaf never sees the whole
-   wave, so the durable decisions, invariants and gotchas that outlived it are the orchestrator's to record.
+   wave's PR merges** — they are the revert granularity the no-squash rule bought — then delete them.
+6. **CRAFT.md, the graph, the glossary:** `task` owns these rules and here the orchestrator performs them — a
+   leaf never sees the whole wave, so the durable decisions, invariants and gotchas that outlived it are yours to
+   record.
 7. **Report and stop.** The next wave is a new `wave` invocation, opened by the user.
 
 ## Rules
 
-- **One wave per run.** wave never rolls on into the next — not on resume, not after a clean close: waves exist
-  to be a checkpoint, and an orchestrator that runs them back to back has removed the only place a human sees
-  the initiative.
-- **The gate is never weakened in the risk zone.** Batched ≠ waived: risk-zone specs by name and labelled as
-  risk-zone, no advance ok, showing the specs ends the turn. `[[risk-zone-min-m]]` and `[[confirm-gate]]` hold at
-  the wave's scale, and classifying the risk is the orchestrator's job, not the PLAN flag's.
+- **One wave per invocation** — not on resume, not after a clean close: waves exist to be a checkpoint, and an
+  orchestrator that runs them back to back removes the only place a human sees the initiative.
+- **The gate is never weakened in the risk zone.** Batched ≠ waived: risk-zone specs labelled and approved by
+  name, no advance ok, showing the specs ends the turn. Classifying the risk is yours, never the PLAN flag's.
 - **`plan` stays planner-only, and wave stays plan-free.** wave doesn't re-cut the DAG, add leaves, or nest a
   plan. Reality diverged from the plan → stop and hand back to `plan`.
 - **wave writes no code.** Its own hands do four things: setup, the gate, verification, the close. Tempted to
   "just fix this one myself" → that's a leaf's spec, or a separate `task` **the user opens after the wave
   closes** — not something you start inside this run.
-- **The pack is the prompt, never a path.** `[[context-pack-not-history]]` leaks through the filesystem too: a
-  path into a shared folder hands over everything co-located with it.
+- **The pack is the prompt, never a path.** A context pack leaks through the filesystem as easily as through
+  history: a path into a shared folder hands over everything co-located with it.
 - **File-disjoint is not semantically independent.** Disjointness buys clean textual merges and nothing else.
 
 ## Stop rules
 
 - **An executor stopped** → don't respawn it and don't finish its work yourself: report what it stopped on.
   Either the leaf leaves the wave (its own `task`), or its spec changes — and a changed spec goes through a full
-  gate again.
+  gate again. It stopped on a second rejected hypothesis → that's a diagnosis, not a retry: `debug` owns the
+  root-cause hunt, and the fix comes back as a leaf's spec or a `task`.
 - **Two executors stopped for the same reason, or leaves collided in a merge** → the cut is wrong, not the
   execution: back to `plan` with what you saw.
 - **A dependency isn't closed, or a leaf's spec no longer matches the PLAN** → don't start; say what diverged.
