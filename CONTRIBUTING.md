@@ -10,8 +10,8 @@ project — so the rules below are about how to change the skills themselves wit
 ## Structure
 - `.claude-plugin/marketplace.json` — the marketplace manifest.
 - `plugins/craftlight/.claude-plugin/plugin.json` — the plugin manifest (**the single source of the version**).
-- `plugins/craftlight/skills/{task,plan,brief,debug,code-review,craft-graph}/` — skills:
-  `SKILL.md` + `templates/` + `tests/` (+ `modes/` for the multi-mode ones).
+- `plugins/craftlight/skills/{task,plan,wave,brief,debug,code-review,craft-graph}/` — skills:
+  `SKILL.md` + `tests/` (+ `templates/` where the skill owns an artifact, `modes/` for the multi-mode ones).
 - `docs/graph/` — the decision graph; `docs/crafts/<slug>/{BRIEF,SPEC,PLAN}.md` — briefs, tasks, and plans of initiatives.
 
 ## How to "test"
