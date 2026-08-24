@@ -4,8 +4,9 @@
      pointers; "why it's this way" lives in docs/graph/. -->
 
 ## What it is
-craftlight is a plugin for Claude Code: six skills of one discipline for developing with an AI agent
-(the ladder brief → plan → task with a debug subcycle, plus code-review and craft-graph). The problem:
+craftlight is a plugin for Claude Code: seven skills of one discipline for developing with an AI agent
+(the ladder brief → plan → task with a debug subcycle, wave running a plan's wave beside task, plus
+code-review and craft-graph). The problem:
 an agent's prompt discipline degrades — rules fall out of context under the pressure of compaction,
 decisions and state are lost between sessions, ceremony either smothers the small stuff or is absent where
 it's risky. The point: to make the agent's work predictable — ceremony proportional to the task, state living
@@ -17,7 +18,7 @@ hooks are advisory-only, the discipline rests on prompts and artifacts, not on b
 ## Entry points
 - The marketplace manifest — `.claude-plugin/marketplace.json`
 - The plugin manifest (version) — `plugins/craftlight/.claude-plugin/plugin.json`
-- Skills (entry `SKILL.md`s; task/code-review/craft-graph are mode routers, plan, brief, and debug are single-mode) — `plugins/craftlight/skills/{task,plan,brief,debug,code-review,craft-graph}/SKILL.md`
+- Skills (entry `SKILL.md`s; task/code-review/craft-graph are mode routers, plan, wave, brief, and debug are single-mode) — `plugins/craftlight/skills/{task,plan,wave,brief,debug,code-review,craft-graph}/SKILL.md`
 
 ## Module map
 - `skills/task/` — the S/M/L task router + owner of CRAFT.md and the craftlight block (`templates/{SPEC,CRAFT,CLAUDE-block}.md`)

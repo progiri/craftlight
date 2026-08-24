@@ -1,12 +1,12 @@
 # CLAUDE.md — craftlight
 
-A marketplace repository with the `craftlight` plugin (six skills of one discipline). Here the skills are
+A marketplace repository with the `craftlight` plugin (seven skills of one discipline). Here the skills are
 **developed**, not applied to a third-party project.
 
 ## Structure
 - `.claude-plugin/marketplace.json` — the marketplace manifest.
 - `plugins/craftlight/.claude-plugin/plugin.json` — the plugin manifest (version).
-- `plugins/craftlight/skills/{task,plan,brief,debug,code-review,craft-graph}/` — skills: `SKILL.md` + `templates/` + `tests/` (+ `modes/` for the multi-mode ones).
+- `plugins/craftlight/skills/{task,plan,wave,brief,debug,code-review,craft-graph}/` — skills: `SKILL.md` + `tests/` (+ `templates/` where the skill owns an artifact, `modes/` for the multi-mode ones).
 - `docs/crafts/<slug>/{BRIEF,SPEC,PLAN}.md` — briefs, tasks, and plans of initiatives (in-progress and completed); `docs/crafts/_backlog.md` — the "noticed along the way" sink; `docs/graph/` — the plugin's decision graph (see `CRAFT.md`).
 
 ## How to "test"

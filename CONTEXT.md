@@ -30,6 +30,17 @@
 - **orphan draft** — a spec draft on disk without a received ok; it is surfaced with a "resume or delete"
   choice, it does not live silently.
 - **run** — a skill's regression check: parallel read-only subagents solve the scenarios and cite the
-  rule; a rule that can't be discovered = red.
+  rule; a rule that can't be discovered = red. The bare word is always this sense; the execution sense is
+  the compound **wave run** below.
 - **feedback loop** — debug's step-1 artifact: one red-capable, deterministic, fast, agent-runnable
   command that reproduces the bug; every experiment is a run of it.
+- **wave run** — one invocation of `wave` over a single wave of a PLAN: a drafter fan-out, the batch gate,
+  an executor fan-out in worktrees, sequential merges, one PR. Its state is the PLAN's "Wave runs" block,
+  never the chat.
+- **wave branch** — `wave/<initiative>-w<N>`, cut from the default branch and given a worktree of its own;
+  leaf branches merge into it `--no-ff` and unsquashed, and it is what the wave's single PR carries.
+- **batch gate** — the wave's one confirmation gate, taken over all leaf drafts at once: every spec shown
+  in full, risk-zone ones approved by name, no advance ok. Batched ≠ weakened.
+- **merge agent** — a throwaway subagent per merge: merges one leaf branch into the wave branch and
+  reports, resolving only mechanically trivial conflicts. It never verifies — tests and checkboxes stay
+  the orchestrator's.
