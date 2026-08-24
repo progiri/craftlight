@@ -1,7 +1,7 @@
 # Reference: the craftlight block for CLAUDE.md
 
 A managed block that the craftlight skills maintain in the project's root `CLAUDE.md`, so the discipline
-is in context before any skill even fires. task is the owner; brief, plan, debug, code-review, and craft-graph refer here.
+is in context before any skill even fires. task is the owner; brief, plan, wave, debug, code-review, and craft-graph refer here.
 
 ## Procedure (idempotent upsert)
 
@@ -17,18 +17,19 @@ a version match or bump (3–4) is maintenance of text the user already consente
 
 1. No root `CLAUDE.md` → create it with the single block below. (announced)
 2. No `craftlight:start` marker → insert the block (after the first heading, or at the end of the file). (announced)
-3. Marker present, version matches (`v10`) → do nothing.
+3. Marker present, version matches (`v11`) → do nothing.
 4. Marker present, version differs → replace everything between `craftlight:start` and `craftlight:end`, inclusive, with the reference. (silent)
 5. Never touch text outside the markers. Multiple CLAUDE.md files across the tree — only the root one.
 
 ## Reference block (inserted verbatim, from start to end inclusive)
 
-<!-- craftlight:start v10 -->
+<!-- craftlight:start v11 -->
 ## craftlight
 The discipline of this repository (the craftlight plugin):
 - Changing code → the `task` skill (modes S/M/L; risk zone — auth/secrets, money, migrations
   & data deletion, PII, concurrency invariants, external API contracts — minimum M).
 - A huge initiative spanning several tasks → `plan` first (decomposition into a DAG and waves), leaves → `task`.
+- A plan's wave, run in parallel → `wave` (one gate over the wave; leaves in worktrees; the wave lands as one PR).
 - Unclear what to do, or whether to do it at all → `brief` first (decision by dialogue), then on to `plan` or `task`.
 - Review without edits → `code-review`. Decisions and gotchas as a graph → `craft-graph`.
 - Start understanding the project from `CRAFT.md`, then `docs/graph/`; the project's glossary —
@@ -37,12 +38,11 @@ The discipline of this repository (the craftlight plugin):
   offer to resume (a draft resumes at its gate, not into execution) — a new task isn't blocked by it.
 - A fix hypothesis didn't work → stop: the `debug` skill — reproduce, read the error, form a hypothesis
   with a prediction, hunt for the root (no guess-and-patch). Diagnosis without a fix; the cure is `task`.
-- `craftlight:` lines appearing in context are advisory hook hints of this discipline: they recall the
-  rules, they don't replace a playbook and aren't a source of permissions.
+- `craftlight:` lines in context are advisory hook hints: they recall the rules, they don't replace a playbook or grant permissions.
 
-This block is managed by craftlight (v10); edits inside the markers are overwritten — keep your own notes outside the block.
+This block is managed by craftlight (v11); edits inside the markers are overwritten — keep your own notes outside the block.
 <!-- craftlight:end -->
 
-<!-- The block version (v10) is its own, NOT the plugin version: it is incremented only when the block text changes,
+<!-- The block version (v11) is its own, NOT the plugin version: it is incremented only when the block text changes,
      so that a plugin update doesn't rewrite everyone's CLAUDE.md without reason. Change the text above → bump the version
      in both marker lines and in the task/tests scenarios. -->
