@@ -28,7 +28,7 @@ Don't create `docs/graph/` and `CRAFT.md` by hand in advance: an empty node is w
 
 ## What's inside
 
-Six skills united by one discipline and a shared "risk zone" (auth, money, migrations, concurrency, data deletion).
+Seven skills united by one discipline and a shared "risk zone" (auth, money, migrations, concurrency, data deletion).
 
 **CLAUDE.md self-maintenance.** On the first run of any skill in a project, craftlight sets up a minimal managed block in the root `CLAUDE.md` (in `craftlight:start/end` markers + a version): which skill when, starting from `CRAFT.md`, the immovable invariants. This way the discipline is in context before the skills even fire. The block is idempotent, updates by version, and doesn't touch your text outside the markers. The reference is [`skills/task/templates/CLAUDE-block.md`](plugins/craftlight/skills/task/templates/CLAUDE-block.md).
 
@@ -55,6 +55,23 @@ A layer above `task` for a huge initiative that breaks into several separate tas
 The boundary is hard: it plans and stops — **it doesn't write code and doesn't orchestrate** execution. Single-mode (no `modes/`). The discussion's decisions settle into the PLAN; they'll reach the graph at a specific task's wrap — a discussion has no `file:line` proof yet.
 
 Triggers on "plan this out / break this epic down / decompose the epic / roadmap / where to start" and on "continue the plan".
+
+### `wave` — running a plan's wave in parallel
+
+The execution layer `plan` deliberately refuses to be. It sits **beside `task`, under `plan`**: a plan's wave, run in parallel → `wave` (one gate over the wave; leaves in worktrees; the wave lands as one PR). One invocation runs **one** wave — N independent leaves at once, each a subagent in its own worktree.
+
+Two fan-outs around a single gate:
+
+- **Drafters** — one per leaf, each given its context pack inline in the prompt (never a path into a shared folder: a pack leaks through the filesystem as easily as through history). Each returns a `draft` spec as text; the orchestrator writes the files.
+- **The batch gate** — every draft shown in full, in one message. Batched ≠ weakened: the orchestrator classifies the risk itself (the PLAN's flag is an input, not the verdict), risk-zone specs are approved **by name**, no advance ok covers a wave gate, and showing the specs ends the turn. A leaf that is really L leaves the wave. Then the cross-leaf sweep — file-disjoint is not semantically independent.
+- **Executors** — one per approved leaf, each pinned to an absolute worktree path (`git -C …`), with a verbatim rule distillate and stop conditions: the risk zone, a second rejected hypothesis, anything outside its own spec.
+- **Integration** — a throwaway merge agent per merge, sequential, `--no-ff` and never squashed so a single leaf stays revertible; it resolves only mechanically trivial conflicts and aborts on anything it can't settle from the two conflicting hunks.
+
+The **verification split** is the anchor: the merge agent merges and reports, but the orchestrator runs the tests against the *merged* tree and only then ticks the PLAN checkbox — a checkbox never rests on an agent's claim. Leaves open no PRs; the wave lands exactly one.
+
+What you buy is **wall-clock, not tokens** — every executor reloads the project's context, so a wave's spend grows roughly ×N while the orchestrator's own context stays cheap and tells you nothing about it. Under 3 leaves, don't open a wave. One wave per invocation: a wave exists to be a checkpoint, and the next one is the user's call.
+
+Triggers on "run the wave / run wave 2 / execute the plan's wave / run these leaves in parallel" and on "continue the wave".
 
 ### `brief` — decision by dialogue before the task
 
@@ -114,6 +131,7 @@ Both hooks are advisory: they block nothing, and stay silent on any ambiguity (f
     └── skills/
         ├── task/          {SKILL.md, modes/, templates/ (SPEC.md + CRAFT.md), tests/}
         ├── plan/          {SKILL.md, templates/ (PLAN.md), tests/}
+        ├── wave/          {SKILL.md, tests/}
         ├── brief/         {SKILL.md, templates/ (BRIEF.md), tests/}
         ├── debug/         {SKILL.md, templates/ (DEBUG.md), tests/}
         ├── code-review/   {SKILL.md, modes/, templates/, tests/}
@@ -122,7 +140,7 @@ Both hooks are advisory: they block nothing, and stay silent on any ambiguity (f
 
 ## Development
 
-All six skills have regression scenarios (`skills/*/tests/scenarios.md`). Run them after any edit to a skill: parallel read-only subagents, each given its prompt; compare the answer against "Expected". The agent must cite the rule that determined the decision — otherwise the phrasing is undiscoverable.
+Every skill has regression scenarios (`skills/*/tests/scenarios.md`). Run them after any edit to a skill: parallel read-only subagents, each given its prompt; compare the answer against "Expected". The agent must cite the rule that determined the decision — otherwise the phrasing is undiscoverable.
 
 The procedure for contributing, releasing, and validating the manifests is in [CONTRIBUTING.md](CONTRIBUTING.md). The version history is in [CHANGELOG.md](CHANGELOG.md).
 
