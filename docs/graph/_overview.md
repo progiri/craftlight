@@ -122,3 +122,4 @@ graph LR
 - [[digest-derived-only]] — craft-graph
 - [[l-cap-executor-detail]] — L/PLAN caps protect the reader; the cut-priority protects executor detail
 - [[leaf-branch-not-pr]] — plan; a leaf is anchored on its branch, not on a PR (a wave lands as one PR)
+- [[wave-runs-plan-waves]] — wave; the execution layer for a plan's wave (parallel leaves, one batched gate)
