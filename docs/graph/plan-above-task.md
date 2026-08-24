@@ -26,5 +26,6 @@ them by the glob `docs/crafts/*/SPEC.md`: leaves must be flat siblings.
 
 ## Edges
 - part-of [[ceremony-proportional]]
+- affects [[leaf-branch-not-pr]] <!-- the "separate tasks/branches/PRs" phrasing above is anchored on branches, not PRs -->
 - depends-on [[spec-in-crafts]]
 - depends-on [[risk-zone-min-m]]

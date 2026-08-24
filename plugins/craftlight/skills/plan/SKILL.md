@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Planning and decomposing a large initiative that breaks into several separate tasks — discuss the nuances, build a tree (DAG) of tasks with dependencies, and lay it out into waves of parallel execution. Use this skill when the scope is not "one task" but an epic of many tasks — the observable boundary is the work landing as several independent PRs — "plan this out", "break the big task down", "decompose the epic", "draft a work plan", "roadmap", "where to start in this big feature", "this is too big for one task", "split it into stages", "plan the refactor of the whole module", "break this epic down" — even without the words "plan" or "skill". Also trigger on a request to continue planning — "continue the plan", "back to the plan", "where are we in the plan". Not for a single task, even a large one (that's `task`, modes S/M/L), not for a review (`code-review`), and not for recording decisions as a graph (`craft-graph`).
+description: Planning and decomposing a large initiative that breaks into several separate tasks — discuss the nuances, build a tree (DAG) of tasks with dependencies, and lay it out into waves of parallel execution. Use this skill when the scope is not "one task" but an epic of many tasks — the observable boundary is the work splitting into several independent tasks, each classified and branched on its own — "plan this out", "break the big task down", "decompose the epic", "draft a work plan", "roadmap", "where to start in this big feature", "this is too big for one task", "split it into stages", "plan the refactor of the whole module", "break this epic down" — even without the words "plan" or "skill". Also trigger on a request to continue planning — "continue the plan", "back to the plan", "where are we in the plan". Not for a single task, even a large one (that's `task`, modes S/M/L), not for a review (`code-review`), and not for recording decisions as a graph (`craft-graph`).
 ---
 
 # plan — decomposing an initiative into waves of tasks
@@ -73,10 +73,13 @@ high, so we discuss iteratively.
 
 ## Step 2. The task DAG
 
-After the gate, break the initiative into **leaf tasks**. A leaf = exactly one future `task` (one branch, one
-PR). For each leaf: `id`, a one-line goal in system terms, a size estimate S/M/L (**a hint** for planning the
-waves — `task` does the real classification at start), a list of dependencies, a risk-zone flag (the canonical
-list is the risk-zone line of the craftlight block in the root `CLAUDE.md` — always in context).
+After the gate, break the initiative into **leaf tasks**. A leaf = exactly one future `task` call, **on its own
+branch** (classified S/M/L on its own too). PR granularity is not the leaf's property — run solo, a leaf lands as its own PR; run inside a wave, the
+whole wave lands as one PR and the leaf still keeps its own branch, so it stays separately revertible. For each
+leaf: `id`, a one-line goal in system terms, a size estimate S/M/L (**a hint** for planning the waves — `task`
+does the real classification at start), a files/area hint (the folders it is expected to touch), a list of
+dependencies, a risk-zone flag (the canonical list is the risk-zone line of the craftlight block in the root
+`CLAUDE.md` — always in context).
 
 - Strictly it's a **DAG** (a task can have several prerequisites and several successors), and the "tree" above
   is a working word for the same structure; the edges are `depends-on`.
@@ -92,6 +95,14 @@ tasks are independent → they parallelize**. Record the **contracts between tas
 invariants) explicitly: they are exactly what lets you start the next wave without re-reading everything — an
 analog of the contracts between phases in task-L, but across separate tasks.
 
+A wave that is actually run gets a **wave branch** `wave/<initiative>-w<N>` — a field beside the wave in the
+PLAN: leaf branches are cut from it and merged back into it, which is why the wave lands as one PR while each
+leaf keeps its branch. plan only lays the field out; the run itself — worktrees, executors, merges, the "Wave
+runs" record — belongs to the `wave` skill (see the Rules). Independence inside a wave is topological, and the
+leaves' files/area hints are what lets it be sanity-checked *before* the run: file-disjoint is not the same as
+semantically independent — one leaf can write a reference into another's file, or shift the line an anchor
+elsewhere in the repo points at.
+
 ## Step 4. Artifact and hand-off
 
 - Record the plan in `docs/crafts/<initiative>/PLAN.md` per `templates/PLAN.md` (status `in-progress`).
@@ -103,19 +114,25 @@ analog of the contracts between phases in task-L, but across separate tasks.
 - The leaves' child specs are **flat neighbors** `docs/crafts/<leaf>/SPEC.md`, NOT nested: the task router
   looks for active tasks with the glob `docs/crafts/*/SPEC.md`, and a single `*` doesn't catch nesting. The PLAN
   links leaves by slug; a link to a not-yet-created spec is normal (`task` creates it at the leaf's start).
-- Hand-off: name wave 1 and its independent tasks, naming the plan in each launch line — `run task on <leaf>
-  (PLAN: <initiative>)` — so the leaf's brief finds its contracts. And **stop**: plan doesn't spawn executors
-  and doesn't call task on the user's behalf.
+- Hand-off: name wave 1 and its independent tasks, and offer both routes — the user picks. Leaf by leaf:
+  `run task on <leaf> (PLAN: <initiative>)`, naming the plan in each launch line so the leaf's brief finds its
+  contracts. Or the whole wave at once through the `wave` skill (one gate over the wave, leaves in their own
+  worktrees, the wave lands as one PR). And **stop**: plan doesn't spawn executors and doesn't call `task` or
+  `wave` on the user's behalf.
 
 ## Rules
 
-- **The planner plans, doesn't execute.** Zero code edits, zero orchestration. Tempted to "start the first
-  task" → that's a separate `task` call, not plan. plan doesn't call task on the user's behalf because a plan
-  hand-off is a fan-out across N independent tasks — auto-invoking would be orchestration; brief's single call
-  is the deliberate contrast (one successor, chosen by an explicit answer).
+- **The planner plans, doesn't execute.** Zero code edits, zero orchestration — the ban is unchanged; what
+  changed is that orchestration now has a home one level down: running a whole wave is the `wave` skill, and
+  **the user** starts it. Tempted to "start the first task" — or the first wave — → that's a separate `task` /
+  `wave` call, not plan. plan doesn't call them on the user's behalf because a plan hand-off is a fan-out across
+  N independent tasks — auto-invoking would be orchestration; brief's single call is the deliberate contrast
+  (one successor, chosen by an explicit answer).
 - **Decisions go in the PLAN, not the graph.** A discussion has no `file:line` proof; `task` will create the
   graph node at the leaf's wrap, once the decision shows up in code. plan doesn't touch the graph.
 - **A leaf's size is a hint.** `task` holds the real S/M/L classification and the "risk zone → minimum M"
   guard; plan only tags them to lay out the waves.
 - **The PLAN is a living document.** Reality diverged from the plan → replan the waves, update the PLAN,
   announce it in one line. Silent drift is worse than an honest edit. CRAFT.md/the graph stay with `task`.
+  plan is not the PLAN's only writer: a wave run fills the "Wave runs" section and ticks its leaves' boxes —
+  that's `wave` writing, plan only lays the shape out.
