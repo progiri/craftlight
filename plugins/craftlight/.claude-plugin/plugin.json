@@ -1,7 +1,7 @@
 {
   "name": "craftlight",
   "description": "Seven skills of one discipline: brief (decision by dialogue before the task), task (task router + CRAFT.md map), plan (decomposing an initiative into waves of tasks, above task), wave (running one wave of a plan in parallel — leaves in worktrees, one gate over the wave, the wave lands as one PR), debug (systematic root-cause hunting without editing code), code-review (review without edits), and craft-graph (a graph of decisions and gotchas). Principle: ceremony proportional to the task — start light, escalate on explicit signals.",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "author": {
     "name": "progiri"
   },

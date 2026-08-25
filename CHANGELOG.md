@@ -6,6 +6,56 @@ versioning is [SemVer](https://semver.org/). The version is stored in
 
 ## [Unreleased]
 
+## [0.14.0]
+The `wave-orchestrator` initiative: a seventh skill, `wave`, that runs one wave of a PLAN — leaves in
+parallel worktrees, a single human gate over the whole wave, one PR per run. Planned as a seven-leaf DAG
+in four waves, executed leaf by leaf through `task`, and closed with one sweep of all seven scenario
+corpora — 193 scenarios, 207 runs, 204 PASS, 3 partial, 0 wrong verdicts. The version goes 0.12.0 →
+0.14.0: `0.13.0` sat in `plugin.json` from this repository's first commit and was never described here,
+and no entry is invented for it now (0.11.0 and 0.13.0 are both gaps in this file).
+
+### Added
+- **`wave` — the seventh skill** (`plugins/craftlight/skills/wave/`, single-mode): runs one wave of a
+  PLAN. A drafter per leaf writes its spec; one batched gate covers the whole wave — no advance ok can
+  cover it, because the specs it would waive don't exist when it is given, and a risk-zone spec is
+  approved by name (blanket enthusiasm is not naming). Executors then run in their own worktrees on leaf
+  branches cut from a wave branch; a merge agent merges and reports, but **the orchestrator runs the
+  tests itself** against the merged tree before any checkbox is ticked — a checkbox never rests on an
+  agent's claim. Stop rules throughout: leaves open no PRs, a leaf that is really L leaves the wave, a
+  semantic merge conflict aborts instead of being settled quietly, `wave` writes no code, reality
+  diverging from the plan goes back to `plan`, and one wave per invocation.
+- A regression corpus for `wave` — 22 scenarios. All seven skills now carry one.
+- Four glossary terms in `CONTEXT.md`: wave run, wave branch, batch gate, merge agent.
+
+### Changed
+- **The managed CLAUDE.md block, v10 → v11**: a routing line for `wave` went in and was *paid for* — the
+  hooks bullet compressed from 2 lines to 1, so the marker-to-marker region still measures 17 lines. That
+  neutrality is load-bearing beyond context weight: three graph nodes prove into `CLAUDE-block.md` at
+  fixed line numbers, and appending would have drifted all three silently.
+- `plan`: PR granularity moved from the leaf to the run. A leaf is one future `task` call **on its own
+  branch** — run solo it lands as its own PR; run inside a wave, the wave lands as one PR and the leaf
+  keeps its branch, so it stays separately revertible. planner-only is unchanged, but orchestration now
+  has a named home one level down. The PLAN template gains a per-wave `Wave branch` field, a "Wave runs"
+  section (laid out empty by `plan`, filled by `wave`), and a `Files/area` hint column — a hint for
+  sanity-checking a wave before it runs, not a fence: file-disjoint is not semantically independent.
+- Docs and manifests: six skills became seven across both READMEs, `CRAFT.md`, `CONTEXT.md`, `CLAUDE.md`,
+  `CONTRIBUTING.md` and both manifests; the blanket `templates/` shape note was corrected — `wave` is the
+  first skill without one.
+
+### Fixed
+- Skill descriptions over CI's 1024-character cap: brief 1111 → 984, craft-graph 1144 → 1004, debug
+  1045 → 1013. Only redundant text went — a nested case its own preceding clause already routes, a
+  node-format aside the skill body still states, and trigger phrases duplicating ones that remain. Every
+  fragment quoted by a description-only regression scenario survives verbatim.
+- The `plugin.json`-vs-CHANGELOG version desync (0.13.0 against a 0.12.0 top entry) that CI asserts.
+
+### Known red at this release
+- The decision-graph lint fails: seven nodes exist as files but are missing from the overview Mermaid
+  (the "Unplaced" queue was never folded in), the proof in `l-cap-executor-detail.md` lost its
+  `plugins/craftlight/` path prefix, and the lint false-positives on the literal `[[slug]]` placeholder
+  in `digest-derived-only.md`. Folding the queue in is a `craft-graph` pass, deliberately outside the
+  release leaf's scope rather than done silently inside it.
+
 ## [0.12.0]
 A full prompt-by-prompt review of the corpus (12 passes: 6 skills + modes, the template family, the hooks),
 each pass critiqued externally, fixed, and regression-run; closed with a single 166-run sweep of all six
@@ -240,6 +290,7 @@ The "lifecycle" batch: the lifecycle of the discipline artifacts was brought up 
 - The plugin's base: the skills **`task`** (the S/M/L router + owner of `CRAFT.md`) and **`code-review`** (review without edits).
 
 [Unreleased]: https://github.com/progiri/craftlight/compare/v0.11.0...HEAD
+[0.14.0]: https://github.com/progiri/craftlight/releases/tag/v0.14.0
 [0.11.0]: https://github.com/progiri/craftlight/releases/tag/v0.11.0
 [0.10.0]: https://github.com/progiri/craftlight/releases/tag/v0.10.0
 [0.9.0]: https://github.com/progiri/craftlight/releases/tag/v0.9.0
