@@ -16,3 +16,4 @@ Editing text outside the markers or a non-idempotent insertion → overwriting t
 ## Edges
 - depends-on [[block-version-own]]
 - affects [[craft-map-decisions-in-graph]]
+- affects [[block-earns-its-lines]]

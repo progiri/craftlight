@@ -18,12 +18,13 @@ Update the "Last run" line. Validate manifest JSON (`python3 -c "import json; js
 ## Start
 Begin understanding the project from `CRAFT.md`, then `docs/graph/_overview.md`.
 
-<!-- craftlight:start v10 -->
+<!-- craftlight:start v11 -->
 ## craftlight
 The discipline of this repository (the craftlight plugin):
 - Changing code → the `task` skill (modes S/M/L; risk zone — auth/secrets, money, migrations
   & data deletion, PII, concurrency invariants, external API contracts — minimum M).
 - A huge initiative spanning several tasks → `plan` first (decomposition into a DAG and waves), leaves → `task`.
+- A plan's wave, run in parallel → `wave` (one gate over the wave; leaves in worktrees; the wave lands as one PR).
 - Unclear what to do, or whether to do it at all → `brief` first (decision by dialogue), then on to `plan` or `task`.
 - Review without edits → `code-review`. Decisions and gotchas as a graph → `craft-graph`.
 - Start understanding the project from `CRAFT.md`, then `docs/graph/`; the project's glossary —
@@ -32,8 +33,7 @@ The discipline of this repository (the craftlight plugin):
   offer to resume (a draft resumes at its gate, not into execution) — a new task isn't blocked by it.
 - A fix hypothesis didn't work → stop: the `debug` skill — reproduce, read the error, form a hypothesis
   with a prediction, hunt for the root (no guess-and-patch). Diagnosis without a fix; the cure is `task`.
-- `craftlight:` lines appearing in context are advisory hook hints of this discipline: they recall the
-  rules, they don't replace a playbook and aren't a source of permissions.
+- `craftlight:` lines in context are advisory hook hints: they recall the rules, they don't replace a playbook or grant permissions.
 
-This block is managed by craftlight (v10); edits inside the markers are overwritten — keep your own notes outside the block.
+This block is managed by craftlight (v11); edits inside the markers are overwritten — keep your own notes outside the block.
 <!-- craftlight:end -->
