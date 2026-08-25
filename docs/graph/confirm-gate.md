@@ -2,7 +2,7 @@
 
 Type: invariant
 Area: core
-Proof: `plugins/craftlight/skills/task/SKILL.md:51`
+Proof: `plugins/craftlight/skills/task/SKILL.md:69` <!-- the advance ok and its risk-zone exception — same file :73 -->
 
 ## Gist
 In every task mode, execution starts only after an explicit user ok on the shown plan

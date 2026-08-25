@@ -19,6 +19,13 @@ right-sized separately; orchestration in plan would complicate things and break 
 Rejected: (1) extend task's L mode — it would bloat L's ceremony; (2) make plan an executor — it would
 mix planning with execution and double the classification.
 
+Partly revised by [[wave-runs-plan-waves]], and only in the clause above about *where* a leaf is classified.
+Planner-only itself is untouched — plan still writes no code and starts no run. But when a leaf runs inside a
+wave rather than solo, it does not enter `task`'s router: `task`'s gate waits for the *user's* next message
+and a subagent has none, so the leaf executes an already-approved spec and the classification moves to the
+wave's batched gate (`plugins/craftlight/skills/wave/SKILL.md:104-109`). Orchestration now has a home one
+level down, started by the user — it did not move into plan.
+
 ## Risks
 plan starts to execute/write code → double classification, loss of leaf right-sizing, a blurred boundary
 with task. Child specs nested (`docs/crafts/<initiative>/<leaf>/SPEC.md`) → the task router doesn't find

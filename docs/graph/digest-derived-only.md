@@ -7,7 +7,7 @@ Source: graph-digest
 Proof: `plugins/craftlight/skills/craft-graph/SKILL.md:46`
 
 ## Gist
-The overview's Digest (hubs / `contradicts` tensions / questions → `[[slug]]`) is derived-only: every
+The overview's Digest (hubs / `contradicts` tensions / questions → `[[<slug>]]`) is derived-only: every
 line is computable from the nodes/edges already on disk. It is rebuilt only by a craft-graph pass that
 edits the overview; writers outside craft-graph append to Unplaced and don't touch it.
 
