@@ -49,12 +49,20 @@ and no entry is invented for it now (0.11.0 and 0.13.0 are both gaps in this fil
   fragment quoted by a description-only regression scenario survives verbatim.
 - The `plugin.json`-vs-CHANGELOG version desync (0.13.0 against a 0.12.0 top entry) that CI asserts.
 
-### Known red at this release
-- The decision-graph lint fails: seven nodes exist as files but are missing from the overview Mermaid
-  (the "Unplaced" queue was never folded in), the proof in `l-cap-executor-detail.md` lost its
-  `plugins/craftlight/` path prefix, and the lint false-positives on the literal `[[slug]]` placeholder
-  in `digest-derived-only.md`. Folding the queue in is a `craft-graph` pass, deliberately outside the
-  release leaf's scope rather than done silently inside it.
+- The decision-graph lint, red on `main` since before this initiative. A `craft-graph` pass folded the
+  overview's "Unplaced" queue in — seven nodes existed as files but had never reached the Mermaid, among
+  them this initiative's own `leaf-branch-not-pr`, `wave-runs-plan-waves` and `block-earns-its-lines` —
+  restored the `plugins/craftlight/` prefix on `l-cap-executor-detail`'s inline proof (and re-anchored
+  it; the line range had moved too), and switched `digest-derived-only`'s literal `[[slug]]` to the
+  `[[<slug>]]` placeholder form the lint already filters and the rest of the graph already used. The
+  overview's Mermaid, node list and Digest are now derived from the nodes' own `Area:` and `## Edges`
+  fields instead of being hand-maintained — which is what `digest-derived-only` and `area-facet-in-node`
+  always asserted and nothing enforced. A new node, `description-cap-cuts-redundancy`, was promoted from
+  the breadcrumb the release leaf left rather than invented for the occasion.
+- Two node proofs that had drifted onto unrelated lines: `confirm-gate` pointed at `task/SKILL.md:51`
+  (now the risk-zone list) and `risk-zone-min-m` at `:36` (now a table row); re-anchored to `:69` and
+  `:51-55`. `plan-above-task` now records the one clause `wave` revised — *where* a leaf is classified —
+  instead of leaving it silently half-true.
 
 ## [0.12.0]
 A full prompt-by-prompt review of the corpus (12 passes: 6 skills + modes, the template family, the hooks),

@@ -2,7 +2,7 @@
 
 Type: invariant
 Area: core
-Proof: `plugins/craftlight/skills/task/SKILL.md:36`
+Proof: `plugins/craftlight/skills/task/SKILL.md:51-55` <!-- the canonical list; the reduction rule that floors the mode — same file :43 -->
 
 ## Gist
 auth, money, migrations, concurrency, data deletion → minimum mode M, even for a one-line edit. The canonical list; playbooks point here.

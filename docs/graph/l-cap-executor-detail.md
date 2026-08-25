@@ -10,7 +10,8 @@ Proof: `plugins/craftlight/skills/task/templates/SPEC.md:59-62`
 Artifact caps are a read-side budget (specs are read many times: resume, hooks, wrap), so they stay.
 But in L and PLAN — where an expensive model authors once and cheap subagents execute many times —
 the cut-priority on a cap hit is: prose first, NEVER file paths, Contracts, or acceptance criteria
-(PLAN: never the task table, the DAG, or the Contracts between tasks; `skills/plan/templates/PLAN.md:67-69`).
+(PLAN: never the task table, the DAG, or the Contracts between tasks;
+`plugins/craftlight/skills/plan/templates/PLAN.md:87-89`).
 
 ## Why
 The old rule cut "prose and checklist detail" — discarding exactly the executor-grade output of the

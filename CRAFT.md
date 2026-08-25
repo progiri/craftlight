@@ -50,3 +50,5 @@ hooks are advisory-only, the discipline rests on prompts and artifacts, not on b
 - [[digest-derived-only]] — the overview Digest is derived from the nodes, no claims of its own
 - [[l-cap-executor-detail]] — L/PLAN caps protect the reader; the cut-priority protects executor-grade detail
 - [[block-earns-its-lines]] — the CLAUDE block doesn't grow: a new line is paid for by compressing another
+- [[block-insert-announced]] — the first block insertion is announced in chat, every later bump is silent
+- [[description-cap-cuts-redundancy]] — a description is cut by dropping redundancy, never a distinct trigger
